@@ -12,15 +12,17 @@ El desarrollo de toda Aplicación Web requiere seguir un [proceso estructurado](
 
 ---
 
-# Título del Proyecto
+# RoomEdit
 
-#### Curso Escolar 20XX-20XX
-#### Autor: [Nombre del alumno autor](Enlace a su cuenta de gitHub)
-#### Tutor: [Nombre del profesor tutor](Enlace a su cuenta de gitHub)
-#### Fecha de Inicio: DD-MM-YYYY
-#### Fecha de Finalización: DD-MM-YYYY
+#### Curso Escolar 2022-2023
+#### Autor: [Javier Coronel Ortiz](https://github.com/Javier-Coronel)
+#### Tutor: [Angélica Mora Núñez](https://github.com/amornun)
+#### Fecha de Inicio: 11-03-2023
+#### Fecha de Finalización: 14-06-2023
 
 ## Breve descripción del proyecto
+
+El proyecto consiste de una aplicacion web la cual permitira a los usuarios crear una sala y comentar en las salas de otros.
 
 Si ya tienes una idea para tu aplicación, explícala brevemente. Si no es así, lo que realmente necesitas es **buscar un problema o necesidad a la que darle solución**, y estos **están por todas partes**. Así que trata de buscar problemas o necesidades en tu vida diaria y realiza una lista. Una vez que tengas una lista exhaustiva, ya puedes empezar a pensar en **cómo puedes resolverlos**.
 
