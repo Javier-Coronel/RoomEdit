@@ -1,0 +1,1 @@
+Esta carpeta contiene todos los archivos para el frontend de la aplicacion, dividida entre el proyecto de unity y el proyecto de bootstrap.
