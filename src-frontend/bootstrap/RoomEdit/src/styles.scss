@@ -1,0 +1,54 @@
+/* You can add global styles to this file, and also import other style files */
+@use '@angular/material' as mat;
+@include mat.core();
+
+
+
+html, body { height: 100%; width: 100%}
+body { margin: 0; font-family: 'Roboto', "Helvetica Neue", sans-serif; }
+
+#registration{
+    width: 90% !important;
+}
+h1{
+    text-align: center;
+}
+#boton{
+    margin-top: 5%;
+}
+#boton,#cuenta{
+    text-align: center;
+}
+#boton>button{
+    padding-left: 2%;
+    padding-right: 2%;
+}
+#cuenta>a{
+    text-decoration: none;
+    font-size:small;
+}
+.form-group *{
+    display: inline;
+}
+.form-control{
+    width: 74%;
+    padding: 4px !important;
+}
+form{
+    width: 100%;
+    padding-top: 1%;
+    overflow: hidden;
+}
+form>*{
+    margin-bottom: 1%;
+}
+.label{
+    width: 26%;
+    align-self: center;
+    justify-self: center;
+}
+label{
+    font-weight: bold;
+    padding-right: 10%;
+    padding-left: 10%;
+}

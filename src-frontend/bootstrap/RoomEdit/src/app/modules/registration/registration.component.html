@@ -1,0 +1,43 @@
+<div [hidden]="submitted" id="registration"
+  class="w-100 h-100 container-fluid d-flex flex-column justify-content-evenly align-items-center">
+  <h1>Registrarse</h1>
+
+  <form #userForm="ngForm" (ngSubmit)="onSubmit(userForm.value)">
+    <div class="form-group d-flex">
+      <div class="label">
+        <label class="p-2" for="firstName">Usuario:</label>
+      </div>
+      <input type="text" class="form-control mr-auto p-2 rounded-pill" name="name" id="name" #name="ngModel" required
+        [(ngModel)]="model.name" pattern="\w+">
+    </div>
+    <div class="form-group d-flex">
+      <div class="label">
+        <label class="p-2" for="email">Email:</label>
+      </div>
+      <input type="email" class="form-control mr-auto p-2 rounded-pill" name="email" id="email" #email="ngModel" required
+        [(ngModel)]="model.email" pattern="^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$">
+    </div>
+    <div class="form-group d-flex">
+      <div class="label">
+        <label class="p-2" for="running-club">Contraseña:</label>
+      </div>
+      <input type="password" class="form-control mr-auto p-2 rounded-pill" name="password" id="password" #password="ngModel" required
+        [(ngModel)]="model.password">
+    </div>
+    <div class="form-group d-flex">
+      <div class="label">
+        <label class="p-2" for="running-club">Repetir contraseña:</label>
+      </div>
+      <input type="password" class="form-control mr-auto p-2 rounded-pill" name="confirmPassword" id="confirmPassword"
+        #confirmPassword="ngModel" required [(ngModel)]="model.confirmPassword">
+    </div>
+    
+    
+    <div id="boton">
+      <button type="submit" class="btn btn-primary rounded-pill" [disabled]="!userForm.form.valid||userForm.value.password!=userForm.value.confirmPassword">Registrarse</button>
+    </div>
+    <div id="cuenta">
+      <a href="login" class="link-dark">¿Ya tienes cuenta?</a>
+    </div>
+  </form>
+</div>
