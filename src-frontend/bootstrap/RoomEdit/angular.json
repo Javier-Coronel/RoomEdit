@@ -27,7 +27,10 @@
             "inlineStyleLanguage": "scss",
             "assets": [
               "src/favicon.ico",
-              "src/assets"
+              "src/assets",
+              "src/assets/ProyectoFinal/Build/ProyectoFinal.data.unityweb",
+              "src/assets/ProyectoFinal/Build/ProyectoFinal.wasm.code.unityweb",
+              "src/assets/ProyectoFinal/Build/ProyectoFinal.wasm.framework.unityweb"
             ],
             "styles": [
               "@angular/material/prebuilt-themes/indigo-pink.css",
@@ -35,7 +38,9 @@
               "src/styles.scss"
             ],
             "scripts": [
-              "node_modules/bootstrap/dist/js/bootstrap.min.js"
+              "node_modules/bootstrap/dist/js/bootstrap.min.js",
+              "src/assets/ProyectoFinal/Build/UnityLoader.js",
+              "src/assets/ProyectoFinal/TemplateData/UnityProgress.js"
             ]
           },
           "configurations": {
@@ -60,7 +65,13 @@
               "vendorChunk": true,
               "extractLicenses": false,
               "sourceMap": true,
-              "namedChunks": true
+              "namedChunks": true,
+              "fileReplacements": [
+                {
+                  "replace": "src/environments/environment.ts",
+                  "with": "src/environments/environment.development.ts"
+                }
+              ]
             }
           },
           "defaultConfiguration": "production"
@@ -94,7 +105,10 @@
             "inlineStyleLanguage": "scss",
             "assets": [
               "src/favicon.ico",
-              "src/assets"
+              "src/assets",
+              "src/assets/ProyectoFinal/Build/ProyectoFinal.data.unityweb",
+              "src/assets/ProyectoFinal/Build/ProyectoFinal.wasm.code.unityweb",
+              "src/assets/ProyectoFinal/Build/ProyectoFinal.wasm.framework.unityweb"
             ],
             "styles": [
               "@angular/material/prebuilt-themes/indigo-pink.css",
@@ -102,7 +116,9 @@
               "src/styles.scss"
             ],
             "scripts": [
-              "node_modules/bootstrap/dist/js/bootstrap.min.js"
+              "node_modules/bootstrap/dist/js/bootstrap.min.js",
+              "src/assets/ProyectoFinal/Build/UnityLoader.js",
+              "src/assets/ProyectoFinal/TemplateData/UnityProgress.js"
             ]
           }
         }

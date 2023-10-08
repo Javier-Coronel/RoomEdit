@@ -4,31 +4,26 @@ let User = require('../models/User.js');
 let Room = require('../models/Room.js');
 let Image = require('../models/Image.js');
 let RoomSchema = new Schema({
-    id:mongoose.Schema.Types.ObjectId,
+    userId:{
+        type:Schema.ObjectId,
+        required:true,
+        ref:'User'
+    },
     name:{
         type:String,
-        required:true
+        required:false,
+        default:""
     },
-    backgroundImage:{
+    backgroundColor:{
         type:String,
         required:true,
-        default:""
+        default:"#000000"
     },
     images:[{
         posX:String,
         posY:String,
         url:String
     }],
-    NValorations:{
-        type:Number,
-        required:true,
-        default:0
-    },
-    NComments:{
-        type:Number,
-        required:true,
-        default:0
-    },
     modificationDate:{
         type:Date,
         required:true,
@@ -41,7 +36,9 @@ let RoomSchema = new Schema({
     },
     roomAsImage:{
         type:String,
-        required:true
+        required:false,
+        default:""
     }
-}) 
+});
+
 module.exports = mongoose.model('Room', RoomSchema);

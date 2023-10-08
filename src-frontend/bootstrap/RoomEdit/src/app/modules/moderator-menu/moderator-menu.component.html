@@ -1,0 +1,52 @@
+<div class="modMenu d-flex justify-content-between">
+  <div class="users">
+    <div id="verificationOfChanges"></div>
+    <div *ngFor="let User of Users" class="User">
+      <mat-slide-toggle [checked]="User.banned" (change)="updateUser(User.name, $event.checked, User.id)"
+        class="datachanger">
+      </mat-slide-toggle>
+      <button (click)="dataFromUser(User.id, User.name)" type="submit" mat-button>{{User.name}}</button>
+    </div>
+  </div>
+  <div class="infoOfUser" *ngIf="UserInViewId != ''">
+    <div class="Room">
+      <h1>
+        Sala del usuario
+        <button mat-button [matMenuTriggerFor]="roomOptions"><mat-icon>more_horiz</mat-icon></button>
+                <mat-menu #roomOptions="matMenu">
+                  <button mat-menu-item (click)="deleteRoom(RoomOfUserInView)">
+                    <span>Eliminar sala</span>
+                  </button>
+                </mat-menu>
+      </h1>
+      <div class="roomImage">
+          <img src="{{RoomImageOfUserInView}}" alt="">
+      </div>
+    </div>
+    <div class="Comments">
+      <h1>Comentarios recientes</h1>
+      <div *ngIf="Comments.length == 0">No hay comentarios de este usuario</div>
+      <div *ngFor="let Comment of Comments" class="comment">
+        <div>
+          <div class="commentHeader d-flex justify-content-between">
+            <div class="">
+              <h3>{{Comment.user}}</h3>
+            </div>
+            <div class="align-self-end">
+              <p>
+                {{Comment.dateOfCreation}}
+                <button mat-button [matMenuTriggerFor]="menu"><mat-icon>more_horiz</mat-icon></button>
+                <mat-menu #menu="matMenu">
+                  <button mat-menu-item (click)="deleteComment(Comment._id)">
+                    <span>Eliminar comentario</span>
+                  </button>
+                </mat-menu>
+              </p>
+            </div>
+          </div>
+          <p>{{Comment.content}}</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

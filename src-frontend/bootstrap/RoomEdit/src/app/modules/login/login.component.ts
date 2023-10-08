@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import { User } from './login.model';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { environment } from 'src/environments/environment.development';
 
 @Component({
   selector: 'app-login',
@@ -22,6 +23,14 @@ export class LoginComponent {
       'Access-Control-Allow-Origin': '*'
     });
     console.log(user);
-    this.http.post("http://localhost:5000/users/signin", user, {headers:headers}).subscribe();
+    this.http.post(environment.BACK_END + "/users/signin", user, {headers:headers}).subscribe(a=>{
+      if(JSON.stringify(a)==='{"message":"Ok"}'){
+        console.log(a);
+        localStorage.setItem("RoomEditUser",user.name);
+        localStorage.setItem("RoomEditPassword",user.password);
+        window.location.href = 'http://' + window.location.host;
+      }
+    });
+    
   }
 }

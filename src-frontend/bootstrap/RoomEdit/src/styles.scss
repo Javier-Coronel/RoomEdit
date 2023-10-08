@@ -1,4 +1,5 @@
 /* You can add global styles to this file, and also import other style files */
+@use "sass:math";
 @use '@angular/material' as mat;
 @include mat.core();
 
@@ -51,4 +52,32 @@ label{
     font-weight: bold;
     padding-right: 10%;
     padding-left: 10%;
+}
+main:has(div.home),main:has(div.adminMenu),main:has(div.modMenu){
+    margin:0px !important;
+    padding:0px !important; 
+    height: 93.4% !important;
+    max-width: none !important;
+}
+#verificationOfChanges{
+    position: sticky !important;
+    top: 100px;
+    width: 35em;
+    height: 5em;
+    text-align: center;
+    vertical-align: middle;
+    line-height: 5em;
+    z-index: 2;
+}
+.User{
+    padding-left: math.percentage(math.div(8,144));
+    background-color: rgb(255, 232, 205);
+    border-radius: 100px;
+    padding: 25px;
+    margin-bottom: 50px;
+    
+}
+.fliped-horizontal{
+    -webkit-transform: scaleY(-1);
+    transform: scaleY(-1);
 }

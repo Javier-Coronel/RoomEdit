@@ -2,9 +2,8 @@ let mongoose = require('mongoose');
 let Schema = mongoose.Schema;
 let User = require('../models/User.js');
 let Room = require('../models/Room.js');
-let Comment = require('../models/Comment.js')
+let Comment = require('../models/Comment.js');
 let CommentSchema = new Schema({
-    id:mongoose.Schema.Types.ObjectId,
     user:{
         type:Schema.ObjectId,
         required:true,
@@ -19,15 +18,11 @@ let CommentSchema = new Schema({
         type:String,
         required:true
     },
-    visible:{
-        type:Boolean,
+    dateOfCreation:{
+        type:Date,
         required:true,
-        default:true
-    },
-    responseOf:{
-        type:Schema.ObjectId,
-        required:false,
-        ref:'Comment'
+        default:Date.now
     }
-})
+});
+
 module.exports = mongoose.model('Comment', CommentSchema);

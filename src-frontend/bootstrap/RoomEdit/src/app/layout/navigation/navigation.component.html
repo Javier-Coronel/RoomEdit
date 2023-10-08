@@ -1,11 +1,22 @@
 <header>
     <div id="main" class="container-fluid align-items-center d-flex justify-content-between">
-      <div class=" mr-auto p-2container w-25 h-25">
-        <a href=""><!--<img src="../../../assets/images/LOGO.png" class="w-25 h-25" alt="Logo de la página"  >--></a>
+      <div class=" mr-auto p-2 w-25 h-25">
+        <h1><a href="">ROOM EDIT<!--<img src="../../../assets/images/LOGO.png" class="w-25 h-25" alt="Logo de la página"  >--></a></h1>
       </div>
-      <div class="d-flex justify-content-around w-25 h-25 ">
-        <a mat-raised-button class="w-25 rounded-pill" href="/register" color="accent">Registrarse</a>
-        <a class="w-30 rounded-pill" href="/login" mat-raised-button color="primary">Iniciar sesión</a>
+      <div class="d-flex justify-content-around w-50 h-25" *ngIf="LoggedUser!=null">
+        <button mat-raised-button class="w-30 rounded-pill" (click)="openRoom()" color="primary">Editar sala</button>
+        <a mat-raised-button class="w-30 rounded-pill" href="/ModeratorMenu"  color="primary" *ngIf="LoggedUser.type=='Mod'||LoggedUser.type=='Admin'">Moderar</a>
+        <a mat-raised-button class="w-30 rounded-pill" href="/ImageUpload"  color="primary" *ngIf="LoggedUser.type=='Admin'">Subir imagenes</a>
+        <a mat-raised-button class="w-30 rounded-pill" href="/AdminMenu" color="primary" *ngIf="LoggedUser.type=='Admin'">Administrar el sitio</a>
+        <!--<div class="user">
+          <button mat-raised-button class="w-30" (click)="show()" color="secondary">{{LoggedUser.name}}</button>
+        </div>-->
+        <a mat-raised-button class="w-30 rounded-pill" href="/ChangePassword" color="primary">Cambiar contraseña</a>
+        <button mat-raised-button class="w-30 rounded-pill" (click)="logout()" color="warn">Cerrar sesión</button>
+      </div>
+      <div class="d-flex justify-content-around w-50 h-25" *ngIf="LoggedUser==null">
+        <a mat-raised-button class="w-30 rounded-pill" href="/register" color="accent">Registrarse</a>
+        <a mat-raised-button class="w-30 rounded-pill" href="/login"  color="primary">Iniciar sesión</a>
       </div>
     </div>
 </header>

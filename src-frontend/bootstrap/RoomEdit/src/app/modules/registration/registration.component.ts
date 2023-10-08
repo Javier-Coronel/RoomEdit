@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import { UserInRegistration } from './registration.model';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { environment } from 'src/environments/environment.development';
 
 @Component({
   selector: 'app-registration',
@@ -22,6 +23,6 @@ export class RegistrationComponent {
       'Access-Control-Allow-Origin': '*'
     });
     console.log(user);
-    this.http.post("http://localhost:5000/users", user, {headers:headers}).subscribe();
+    this.http.post(environment.BACK_END + "/users", user, {headers:headers}).subscribe();
   }
 }

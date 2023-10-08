@@ -1,2 +1,67 @@
-<p>home works!</p>
-<div class="container"></div>
+<div class=" d-flex w-100 h-100 home">
+  <mat-drawer-container class="leftDrawer p-2" id="leftContainer" [hasBackdrop]="false">
+    <mat-drawer position="start" id="leftDrawer" #leftDrawer mode="over">
+      <div class="header">
+        <h1>BUSCAR</h1>
+        <button mat-fab (click)="leftDrawer.toggle()" color="primary" class="leftButtonContract">
+          <mat-icon aria-hidden="false" aria-label="Example home icon" fontIcon="keyboard_double_arrow_left"></mat-icon>
+        </button>
+      </div>
+    </mat-drawer>
+    <mat-drawer-content id="leftContent" class="overflow-hidden">
+      <button mat-fab (click)="leftDrawer.toggle()" color="primary" class="rightButtonExpand">
+        <mat-icon aria-hidden="false" aria-label="Example home icon" fontIcon="keyboard_double_arrow_right"></mat-icon>
+      </button>
+    </mat-drawer-content>
+  </mat-drawer-container>
+  <div id="center">
+    <div id="roomContainer">
+      <unity *ngIf="ActualRoom=='' && RegisteredUser"></unity>
+      <app-room-view *ngIf="ActualRoom!=''" [RoomImage]="RoomImage"></app-room-view>
+    </div>
+    <div id="comments" class="overflow-visible">
+      <div id="commentsheaderandform">
+        <h2>Comentarios:</h2>
+        <form #commentForm="ngForm" (ngSubmit)="onCommentSubmit(commentForm.value)" >
+          <input type="text" name="comment" id="comment" #comment="ngModel" required [(ngModel)]="commentModel.comment" [disabled]="!RegisteredUser">
+          <button type="submit" [disabled]="commentForm.value.comment=='' || !RegisteredUser">
+            <mat-icon aria-hidden="false" aria-label="Send comment">send_outline_rounded</mat-icon>
+          </button>
+        </form>
+      </div>
+      <div class="comments">
+        <div *ngFor="let Comment of Comments">
+          <div class="commentHeader d-flex justify-content-between">
+            <div class="">
+              <h3>{{Comment.user}}</h3>
+            </div>
+            <div class="align-self-end">
+              <p>{{Comment.dateOfCreation}}</p>
+            </div>
+          </div>
+          <p>{{Comment.content}}</p>
+        </div>
+      </div>
+    </div>
+  </div>
+  <mat-drawer-container class="p-2 mr-auto rightDrawer" id="rightContainer" [hasBackdrop]="false">
+    <mat-drawer position="end" id="rightDrawer" #rightDrawer mode="over">
+      <div class="header">
+        <button mat-fab (click)="rightDrawer.toggle()" color="primary" class="rightButtonContract">
+          <mat-icon aria-hidden="false" aria-label="Example home icon" fontIcon="keyboard_double_arrow_right">
+          </mat-icon>
+        </button>
+        <h1>SALAS</h1>
+      </div>
+      <div class="roomImage" *ngFor="let Room of Rooms">
+        <img (click)="changeToRoomView(Room.id)" src="{{Room.imageOfRoom}}" alt="{{Room.nameOfRoom}}">
+      </div>
+    </mat-drawer>
+    <mat-drawer-content id="rightContent" class="overflow-hidden">
+      <button mat-fab (click)="rightDrawer.toggle()" color="primary" class="leftButtonExpand">
+        <mat-icon aria-hidden="false" aria-label="Example home icon" fontIcon="keyboard_double_arrow_left"></mat-icon>
+      </button>
+    </mat-drawer-content>
+  </mat-drawer-container>
+
+</div>

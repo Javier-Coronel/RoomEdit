@@ -1,0 +1,23 @@
+<div class="adminMenu">
+  <div id="verificationOfChanges"></div>
+  <div id="searchUser" class="">
+    <form #commentForm="ngForm" (ngSubmit)="onSearch(commentForm.value)">
+      <input type="text" name="user" id="user" placeholder="Buscar usuario" #user="ngModel" [(ngModel)]="userModel.user">
+      <button type="submit">
+        <mat-icon aria-hidden="false" aria-label="Search user">search</mat-icon>
+      </button>
+    </form>
+  </div>
+  <div class="users">
+    <div *ngFor="let User of Users" class="User">
+      {{User.name}}
+      <mat-form-field class="datachanger">
+        <select matNativeControl (change)="updateUser(User.name, $event.target, User.id)">
+          <option *ngFor="let userType of userTypes" [value]="userType" [selected]="userType === User.type">
+            {{userType}}
+          </option>
+        </select>
+      </mat-form-field>
+    </div>
+  </div>
+</div>

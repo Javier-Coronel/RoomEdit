@@ -1,0 +1,133 @@
+
+*{
+    margin: 0;
+    margin-right: 0px !important;
+    margin-left: 0px !important;
+    text-shadow: none !important;
+    box-shadow: none !important;
+}
+.rightButtonExpand, .leftButtonContract{
+    justify-content: end !important;
+    
+}
+.rightButtonExpand{
+    left: -5%;
+}
+.leftButtonExpand, .rightButtonContract{
+    justify-content: left !important;
+}
+.leftButtonExpand{
+    left: 95%;
+}
+#leftContainer,#rightContainer{
+    width: 27.7777777777% !important;
+}
+#leftDrawer,#rightDrawer{
+    width: 100%;
+}
+.rightDrawer, .rightDrawer *{
+    right:0px !important;
+}
+mat-drawer-container, div{
+    padding: 0px !important;
+    border: 0px !important;
+}
+.header{
+    display:flex;
+    align-items: flex-end;
+    padding-bottom: 10% !important;
+}
+.header h1{
+    text-align: center;
+    width:87.5% !important;
+    
+    background-color: #3f51b5;
+}
+div.home{
+    margin:0px !important;
+}
+#center{
+    width: 44.4444444444%;
+}
+#roomContainer:has(unity){
+    height: 70.5% !important;
+    
+}
+#roomContainer:has(app-room-view){
+    aspect-ratio: 19/10;
+    width: 100%;
+}
+#comments{
+    overflow-y:scroll !important;
+}
+#roomContainer:has(unity) + #comments{
+    height: 29.5% !important;
+}
+#comments h2{
+    padding: 1em;
+    padding-left: 7% !important;
+    padding-bottom: 0.5em;
+    
+}
+#comments form{
+    display:flex;
+    justify-content: center !important;
+    justify-items: center !important;
+    
+}
+#comments form input{
+    border-color: black;
+    border-right: 0px;
+    width: 71.875%;
+    border-top-left-radius: 100px;
+    border-bottom-left-radius: 100px;
+    padding-left: 12px;
+    
+}
+#comments form button{
+    border-color: black;
+    border-top-right-radius: 100px;
+    border-bottom-right-radius: 100px;
+    padding-right: 12px;
+}
+#comments .comments{
+    width: 85.9375%;
+    padding-left: 7% !important;
+}
+#commentHeader{
+    width: 100% !important;
+    display:flex;
+    justify-items: center !important;
+    align-items: flex-end !important;
+}
+.commentHeader .align-self-end{
+    font-size: small;
+    right: 0px !important;
+}
+.commentHeader .align-self-end{
+    border-left: 100px;
+}
+#comments::-webkit-scrollbar{
+    width: 10px;
+}
+#comments::-webkit-scrollbar-thumb {
+    background: #888;
+}
+#comments::-webkit-scrollbar-thumb:hover {
+    background: #555;
+}
+#commentsheaderandform{
+    //position: sticky;
+    top: 0px;
+    height:60%;
+    background-color: white;
+}
+.roomImage{
+    padding-left: 56px !important;
+    right: 0px;
+    aspect-ratio: 19/10;
+    text-align: center;
+    img{
+        width: 90%;
+    }
+}

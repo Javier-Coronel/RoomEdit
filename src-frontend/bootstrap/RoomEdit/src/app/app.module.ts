@@ -11,6 +11,8 @@ import { SkeletonComponent } from './layout/skeleton/skeleton.component';
 import { NavigationComponent } from './layout/navigation/navigation.component';
 import { MaterialModule } from './core/material/material.module';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { UnityComponent } from './modules/unity/unity.component';
+
 
 @NgModule({
   declarations: [

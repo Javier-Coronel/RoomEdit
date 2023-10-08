@@ -59,3 +59,7 @@ typings/
 
 # next.js build output
 .next
+
+# ignore the images that are for testing
+src-api/public/images/*
+src-api/public/rooms/*

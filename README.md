@@ -16,9 +16,9 @@ El desarrollo de toda Aplicación Web requiere seguir un [proceso estructurado](
 
 #### Curso Escolar 2022-2023
 #### Autor: [Javier Coronel Ortiz](https://github.com/Javier-Coronel)
-#### Tutora: [Angélica Mora Núñez](https://github.com/amornun)
-#### Fecha de Inicio: 11-03-2023
-#### Fecha de Finalización: 14-06-2023
+#### Tutor: [Antonio Gabriel González Casado](https://github.com/antonio-gabriel-gonzalez-casado)
+#### Fecha de Inicio: 18-09-2023
+#### Fecha de Finalización: 11-12-2023
 
 ## Breve descripción del proyecto
 

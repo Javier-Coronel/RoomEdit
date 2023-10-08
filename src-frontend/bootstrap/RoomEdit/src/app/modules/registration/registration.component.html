@@ -5,9 +5,9 @@
   <form #userForm="ngForm" (ngSubmit)="onSubmit(userForm.value)">
     <div class="form-group d-flex">
       <div class="label">
-        <label class="p-2" for="firstName">Usuario:</label>
+        <label class="p-2" for="name">Usuario:</label>
       </div>
-      <input type="text" class="form-control mr-auto p-2 rounded-pill" name="name" id="name" #name="ngModel" required
+      <input type="text" class="form-control mr-auto p-2 rounded-pill" name="name" id="name" #name="ngModel" required autofocus
         [(ngModel)]="model.name" pattern="\w+">
     </div>
     <div class="form-group d-flex">
@@ -19,14 +19,14 @@
     </div>
     <div class="form-group d-flex">
       <div class="label">
-        <label class="p-2" for="running-club">Contraseña:</label>
+        <label class="p-2" for="password">Contraseña:</label>
       </div>
       <input type="password" class="form-control mr-auto p-2 rounded-pill" name="password" id="password" #password="ngModel" required
         [(ngModel)]="model.password">
     </div>
     <div class="form-group d-flex">
       <div class="label">
-        <label class="p-2" for="running-club">Repetir contraseña:</label>
+        <label class="p-2" for="confirmPassword">Repetir contraseña:</label>
       </div>
       <input type="password" class="form-control mr-auto p-2 rounded-pill" name="confirmPassword" id="confirmPassword"
         #confirmPassword="ngModel" required [(ngModel)]="model.confirmPassword">

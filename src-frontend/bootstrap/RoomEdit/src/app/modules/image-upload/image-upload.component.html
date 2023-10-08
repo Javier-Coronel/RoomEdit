@@ -1,0 +1,10 @@
+<div class="dropfile">
+  <input type="file" id="files" name="dropfile" id="dropfile" accept=".jpg, .png" multiple (change)="createFormData($event)">
+  <mat-icon fontIcon="cloud_upload"></mat-icon>
+  <h5><label for="dropfile">CARGA AQUI LAS IMAGENES</label></h5>
+  <p>(Deben tener el formato PNG o JPG)</p>
+</div>
+<button (click)="upload()">Upload</button>
+<div class="d-flex justify-content-between uploaded-images" >
+<img class="p-2" *ngFor="let image of images" src="{{image}}">
+</div>

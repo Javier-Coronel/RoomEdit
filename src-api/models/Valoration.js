@@ -4,7 +4,6 @@ let Schema = mongoose.Schema;
 let User = require('../models/User.js');
 let Room = require('../models/Room.js');
 let ValorationSchema = new Schema({
-    id:mongoose.Schema.Types.ObjectId,
     user:{
         type:Schema.ObjectId,
         required:true,
@@ -23,7 +22,6 @@ let ValorationSchema = new Schema({
           }
     }
     
-})
+});
 
-//ValorationSchema.index({user:1,room:1},{unique:true});
 module.exports = mongoose.model('Valoration', ValorationSchema);

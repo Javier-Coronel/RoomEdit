@@ -2,6 +2,8 @@ const createError = require('http-errors');
 const express = require('express');
 const cors = require('cors');
 const path = require('path');
+const router = express.Router();
+const multer = require("multer");
 const cookieParser = require('cookie-parser');
 const logger = require('morgan');
 const {body, validationResult} = require('express-validator');
@@ -17,6 +19,8 @@ let valorationModel = require('./models/Valoration');
 let usersRouter = require('./routes/users');
 let roomsRouter = require('./routes/rooms');
 let valorationsRouter = require('./routes/valorations');
+let commentsRouter = require('./routes/comments');
+let imagesRouter = require("./routes/images")
 
 const mongoose = require('mongoose');
 const { title } = require('process');
@@ -47,7 +51,8 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.use('/users', usersRouter);
 app.use('/rooms', roomsRouter);
 app.use('/valorations',valorationsRouter);
-
+app.use('/comments',commentsRouter)
+app.use('/images',imagesRouter)
 
 /*
 app.get('/', (req, res) => {
