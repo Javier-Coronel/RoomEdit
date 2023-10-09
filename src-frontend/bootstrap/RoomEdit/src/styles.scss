@@ -59,6 +59,9 @@ main:has(div.home),main:has(div.adminMenu),main:has(div.modMenu){
     height: 93.4% !important;
     max-width: none !important;
 }
+main:has(div.home){
+    overflow-y: hidden !important;
+}
 #verificationOfChanges{
     position: sticky !important;
     top: 100px;
