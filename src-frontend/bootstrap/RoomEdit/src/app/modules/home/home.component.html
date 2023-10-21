@@ -22,8 +22,9 @@
     <div id="comments" class="overflow-visible">
       <div id="commentsheaderandform">
         <h2>Comentarios:</h2>
-        <form #commentForm="ngForm" (ngSubmit)="onCommentSubmit(commentForm.value)" >
-          <input type="text" name="comment" id="comment" #comment="ngModel" required [(ngModel)]="commentModel.comment" [disabled]="!RegisteredUser">
+        <form #commentForm="ngForm" (ngSubmit)="onCommentSubmit(commentForm.value)">
+          <input type="text" name="comment" id="comment" #comment="ngModel" required [(ngModel)]="commentModel.comment"
+            [disabled]="!RegisteredUser">
           <button type="submit" [disabled]="commentForm.value.comment=='' || !RegisteredUser">
             <mat-icon aria-hidden="false" aria-label="Send comment">send_outline_rounded</mat-icon>
           </button>
@@ -51,8 +52,25 @@
           <mat-icon aria-hidden="false" aria-label="Example home icon" fontIcon="keyboard_double_arrow_right">
           </mat-icon>
         </button>
-        <h1>SALAS</h1>
+        <h1>SALAS
+          <button mat-button [matMenuTriggerFor]="RoomSort">
+            <mat-icon>more_vert</mat-icon>
+          </button>
+          <mat-menu #RoomSort="matMenu">
+            <button mat-menu-item (click)="getRooms('sortByValorations')">
+              <span>Ordenar por valoraciones</span>
+            </button>
+            <button mat-menu-item (click)="getRooms('sortByComments')">
+              <span>Ordenar por comentarios</span>
+            </button>
+            <button mat-menu-item (click)="getRooms()">
+              <span>Ordenar por modificaciones recientes</span>
+            </button>
+          </mat-menu>
+        </h1>
+
       </div>
+
       <div class="roomImage" *ngFor="let Room of Rooms">
         <img (click)="changeToRoomView(Room.id)" src="{{Room.imageOfRoom}}" alt="{{Room.nameOfRoom}}">
       </div>

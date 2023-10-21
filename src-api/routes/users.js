@@ -52,7 +52,7 @@ router.post('/',
 );
 
 /**
- * Busca a todos los usuarios
+ * Busca a todos los usuarios.
  */
 router.get('/', function (req, res, next) {
   User.find().sort('name').exec(function (err, users) {
@@ -62,7 +62,7 @@ router.get('/', function (req, res, next) {
 });
 
 /**
- * Busca a un usuario por su nombre
+ * Busca a todos los usuarios que tengan en el nombre el dato pasado.
  */
 router.get('/searchByName/:name', function (req, res, next) {
   User.find({

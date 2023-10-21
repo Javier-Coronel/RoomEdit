@@ -15,11 +15,6 @@ export class UnityComponent implements OnInit {
   constructor(private http: HttpClient) { }
 
   ngOnInit(): void {
-    this.gameInstance = UnityLoader.instantiate(
-      'gameContainer', 
-      '/assets/ProyectoFinal/Build/ProyectoFinal.json',
-      {onprogress:UnityProgress}
-    )
     this.http.get(environment.BACK_END+"/rooms/searchByUser/"+localStorage.getItem("RoomEditUser")).subscribe(
       a=> {
         console.log(a)

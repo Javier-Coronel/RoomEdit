@@ -23,20 +23,44 @@ export class HomeComponent {
       this.getComments();
       this.RegisteredUser = true;
     }
-    this.http.get(environment.BACK_END + "/rooms/").subscribe(
-      a => {
-        console.log(a);
-        let b = JSON.parse(JSON.stringify(a));
-        b.forEach((element: { roomAsImage: string, name: string, _id: string, userId: { name: string } }) => {
-          try {
-            this.Rooms.push({ 'imageOfRoom': environment.BACK_END + "/rooms/" + element.roomAsImage, 'nameOfRoom': (element.name) ? element.name : "Sala de " + element.userId.name, 'id': element._id });
-          } catch (error) {}
-        });
-      }
-    );
+    this.getRooms();
     console.log(this.Rooms)
   }
 
+  /**
+   * Obtiene todas las salas.
+   */
+  getRooms(type?: string) {
+    this.Rooms = [];
+    if (!type || type=="sortByModificaction") {
+      this.http.get(environment.BACK_END + "/rooms/").subscribe(
+        a => {
+          console.log(a);
+          let b = JSON.parse(JSON.stringify(a));
+          b.forEach((element: { roomAsImage: string; name: string; _id: string; userId: { name: string; }; }) => {
+            try {
+              this.Rooms.push({ 'imageOfRoom': environment.BACK_END + "/rooms/" + element.roomAsImage, 'nameOfRoom': (element.name) ? element.name : "Sala de " + element.userId.name, 'id': element._id });
+            } catch (error) { }
+          });
+        }
+      );
+    }
+    else if(type == "sortByValorations" || type=="sortByComments"){
+      this.http.get(environment.BACK_END + "/rooms/" + type).subscribe(a=>{
+        let b = JSON.parse(JSON.stringify(a));
+        console.log(b)
+          b.forEach((element:{ room:{ roomAsImage: string; name: string; _id: string; userId: { name: string; }; }}) => {
+            try {
+              this.Rooms.push({ 'imageOfRoom': environment.BACK_END + "/rooms/" + element.room.roomAsImage, 'nameOfRoom': (element.room.name) ? element.room.name : "Sala de " + element.room.userId.name, 'id': element.room._id });
+            } catch (error) { }
+          });
+      })
+    }
+  }
+
+  /**
+   * Obtiene los comentarios de sala en la que el usuario se encuentra.
+   */
   getComments() {
     this.Comments = [];
     let commentsUrl = environment.BACK_END + (this.ActualRoom === "" ? "/comments/roomofuser/" + localStorage.getItem("RoomEditUser") : "/comments/roomid/" + this.ActualRoom);
@@ -49,7 +73,7 @@ export class HomeComponent {
           date = date[2].split('T')[0] + '/' + date[1] + '/' + date[0]
           try {
             this.Comments.push({ 'user': element.user.name, 'dateOfCreation': date, 'content': element.content });
-          } catch (error) {}
+          } catch (error) { }
           console.log(this.Comments)
         });
       }
@@ -65,6 +89,10 @@ export class HomeComponent {
     this.getComments();
   }
 
+  /**
+   * Envia un comentario al servidor para ser posteado.
+   * @param comment El contenido del comentario
+   */
   onCommentSubmit(comment: { comment: string }) {
     const headers = new HttpHeaders({
       'Content-Type': 'application/json',
@@ -76,17 +104,22 @@ export class HomeComponent {
     let user = localStorage.getItem("RoomEditUser");
     if (user) {
       console.log(user)
-      if (this.ActualRoom!='') {
+      if (this.ActualRoom != '') {
         this.http.post(environment.BACK_END + "/comments", { user: user, room: this.ActualRoom, content: comment.comment }, { headers: headers }).subscribe(a => {
           this.getComments();
         });
       }
-      else{
-
+      else {
+        this.http.get(environment.BACK_END + "/rooms/searchByUser/" + localStorage.getItem("RoomEditUser")).subscribe(
+          a => {
+            console.log(a)
+            this.http.post(environment.BACK_END + "/comments", { user: user, room: a, content: comment.comment }, { headers: headers }).subscribe(a => {
+              this.getComments();
+            });
+          }
+        );
       }
-      
     }
-
   }
 }
 

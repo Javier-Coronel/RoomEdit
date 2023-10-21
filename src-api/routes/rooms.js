@@ -7,6 +7,8 @@ const unlink = require('fs/promises')
 const mongoose = require('mongoose');
 const Room = require('../models/Room');
 const User = require('../models/User');
+const Valoration = require('../models/Valoration')
+const Comments = require('../models/Comment')
 const {
   body,
   validationResult
@@ -25,7 +27,8 @@ const upload = multer({
 })
 
 /**
- * Obtiene todas las salas y sus usuarios si estos no esta baneados
+ * Obtiene todas las salas y sus usuarios si estos no esta 
+ * baneados ordenados por la ultima modificacion a la sala.
  */
 router.get('/', (req, res) => {
   Room.find({
@@ -33,7 +36,7 @@ router.get('/', (req, res) => {
         $ne: ""
       }
     })
-    .sort('modificationDate')
+    .sort('-modificationDate')
     .populate({
       path: 'userId',
       match: {
@@ -110,6 +113,103 @@ router.get('/userRoom/:id',
 )
 
 /**
+ * Obtiene todas las salas y sus usuarios si estos no esta 
+ * baneados ordenados por la cantidad de valoraciones, si
+ * la sala no tiene valoraciones tampoco aparecera la sala.
+ */
+router.get('/sortByValorations',
+  (req, res) => {
+    Valoration.aggregate([{
+      $group: {
+        _id: "$room",
+        count: {
+          $sum: 1
+        }
+      }
+    }, {
+      $project: {
+        room: '$_id',
+        count: 1
+      }
+    }]).sort('-count -modificationDate').exec(function (err, valorations) {
+      if (err) res.status(500).send(err);
+      else {
+        Room.populate(valorations, {
+          path: "room",
+          match: {
+            roomAsImage: {
+              $ne: ""
+            }
+          }
+        }, (err, valorations) => {
+          if (err) res.status(500).send(err);
+          else {
+            console.log(valorations)
+            User.populate(valorations, {
+              path: 'room.userId',
+              match: {
+                banned: false
+              }
+            }, (err, valorations) => {
+              if (err) res.status(500).send(err);
+              else res.status(200).json(valorations.filter((valoration) => valoration.room.roomAsImage != "" && valoration.room.userId))
+            })
+          }
+        })
+      }
+    })
+  });
+
+/**
+ * Obtiene todas las salas y sus usuarios si estos no esta 
+ * baneados ordenados por la cantidad de comentarios, si
+ * la sala no tiene comentarios tampoco aparecera la sala.
+ */
+router.get('/sortByComments',
+  (req, res) => {
+    Comments.aggregate([{
+      $group: {
+        _id: "$room",
+        count: {
+          $sum: 1
+        }
+      }
+    }, {
+      $project: {
+        room: '$_id',
+        count: 1
+      }
+    }]).sort('-count -modificationDate').exec(function (err, valorations) {
+      if (err) res.status(500).send(err);
+      else {
+        Room.populate(valorations, {
+          path: "room",
+          match: {
+            roomAsImage: {
+              $ne: ""
+            }
+          }
+        }, (err, valorations) => {
+          if (err) res.status(500).send(err);
+          else {
+            console.log(valorations)
+            User.populate(valorations, {
+              path: 'room.userId',
+              match: {
+                banned: false
+              }
+            }, (err, valorations) => {
+              if (err) res.status(500).send(err);
+              else res.status(200).json(valorations.filter((valoration) => valoration.room.roomAsImage != "" && valoration.room.userId))
+            })
+          }
+        })
+      }
+    })
+  });
+
+
+/**
  * Actualiza una sala con los datos dados.
  */
 router.post('/updateRoom', upload.single("image"),
@@ -118,7 +218,11 @@ router.post('/updateRoom', upload.single("image"),
     Room.findByIdAndUpdate(req.body.roomcode, {
       backgroundColor: req.body.BackgroudColor,
       images: req.body.images.length == 1 ? [] : JSON.parse(req.body.images),
-      roomAsImage: req.file.filename
+      roomAsImage: req.file.filename,
+      modificationDate: Date.now(),
+      $unset: {
+        originalRoom: 1
+      }
     }, function (err, room) {
       if (err) {
         res.status(500).send(err)
@@ -132,10 +236,43 @@ router.post('/updateRoom', upload.single("image"),
  * del usuario que se ha pasado en el body.
  */
 router.put('/copyRoom',
-body('copiedRoom')
-.exists()
-.isString(),
-body(''))
+  body('copiedRoom')
+  .exists()
+  .isString(),
+  body('name')
+  .exists()
+  .isString(),
+  async (req, res) => {
+    User.findOne({
+      name: req.body.name
+    }).exec(function (err, user) {
+      if (err) res.status(500).send(err);
+      else Room.findById(
+        req.body.copiedRoom
+      ).exec(async function (err, copiedRoom) {
+        if (err) res.status(500).send(err);
+        else Room.findOneAndUpdate({
+          userId: user._id
+        }, {
+          backgroundColor: copiedRoom.backgroundColor,
+          images: copiedRoom.images,
+          roomAsImage: copiedRoom.roomAsImage,
+          name: "Copia de " + copiedRoom.name,
+          originalRoom: copiedRoom._id,
+          modificationDate: copiedRoom.modificationDate
+        }).exec(async function (err, copyOfRoom) {
+          if (err) res.status(500).send(err)
+          else {
+            fs.copyFile("./public/rooms/" + copiedRoom.roomAsImage, "./public/rooms/" + copyOfRoom._id + ".png", (err) => {
+              if (err) res.status(500).send(err)
+              else res.status(200).json(copyOfRoom);
+            })
+          }
+        })
+      })
+    })
+  })
+
 
 /**
  * Elimina todos los datos de la sala pasada,

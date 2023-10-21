@@ -1,4 +1,4 @@
-
+@use "sass:math";
 *{
     margin: 0;
     margin-right: 0px !important;
@@ -11,22 +11,21 @@
     
 }
 .rightButtonExpand{
-    left: -5%;
+    left: -28px;
 }
 .leftButtonExpand, .rightButtonContract{
     justify-content: left !important;
 }
-.leftButtonExpand{
-    left: 95%;
-}
+
 #leftContainer,#rightContainer{
     width: 27.7777777777% !important;
 }
+.leftButtonExpand{
+    right:-28px !important;
+    float:right;
+}
 #leftDrawer,#rightDrawer{
     width: 100%;
-}
-.rightDrawer, .rightDrawer *{
-    right:0px !important;
 }
 mat-drawer-container, div{
     padding: 0px !important;
@@ -53,27 +52,27 @@ div.home{
     height: 70.5% !important;
     
 }
-#roomContainer:has(app-room-view){
-    aspect-ratio: 19/10;
-    width: 100%;
-}
 #comments{
     overflow-y:scroll !important;
 }
 #roomContainer:has(unity) + #comments{
     height: 29.5% !important;
 }
+
+#roomContainer:has(app-room-view) + #comments{
+    //height: math.percentage(math.div(900,19)) !important;
+    min-height: 30%;
+    max-height: 46%;
+}
 #comments h2{
     padding: 1em;
     padding-left: 7% !important;
     padding-bottom: 0.5em;
-    
 }
 #comments form{
     display:flex;
     justify-content: center !important;
     justify-items: center !important;
-    
 }
 #comments form input{
     border-color: black;
@@ -117,7 +116,6 @@ div.home{
     background: #555;
 }
 #commentsheaderandform{
-    //position: sticky;
     top: 0px;
     height:60%;
     background-color: white;

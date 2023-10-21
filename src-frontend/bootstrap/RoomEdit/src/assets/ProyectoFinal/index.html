@@ -14,7 +14,7 @@
         unityInstance.SendMessage("GameObject","CheckUrl",url);
       }
       function changeColor(color){
-        unityInstance.SendMessage("BackgroudColor","ModifyColor",color);
+        unityInstance.SendMessage("GameObject","setBackgroudColor",color);
       }
       function setRoomid(roomId) {
         unityInstance.SendMessage("GameObject","setRoomId",roomId)
