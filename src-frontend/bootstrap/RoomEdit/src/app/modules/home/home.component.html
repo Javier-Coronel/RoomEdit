@@ -16,32 +16,17 @@
   </mat-drawer-container>
   <div id="center">
     <div id="roomContainer">
-      <unity *ngIf="ActualRoom=='' && RegisteredUser"></unity>
-      <app-room-view *ngIf="ActualRoom!=''" [RoomImage]="RoomImage"></app-room-view>
+      <unity *ngIf="ActualRoom=='' && RegisteredUser" (onUnityLoaded)="ActivateUnityOptions()"></unity>
+      <app-room-view *ngIf="ActualRoom!=''" [RoomImage]="RoomImage" [RoomName]="RoomName"></app-room-view>
     </div>
-    <div id="comments" class="overflow-visible">
-      <div id="commentsheaderandform">
-        <h2>Comentarios:</h2>
-        <form #commentForm="ngForm" (ngSubmit)="onCommentSubmit(commentForm.value)">
-          <input type="text" name="comment" id="comment" #comment="ngModel" required [(ngModel)]="commentModel.comment"
-            [disabled]="!RegisteredUser">
-          <button type="submit" [disabled]="commentForm.value.comment=='' || !RegisteredUser">
-            <mat-icon aria-hidden="false" aria-label="Send comment">send_outline_rounded</mat-icon>
-          </button>
-        </form>
+    <div id="editionOfRoom" *ngIf="ActualRoom=='' && RegisteredUser">
+      <div>
+        Nombre de la sala:
+        <input type="text" [value]="UserRoom.name" (change)="changeRoomName($event)">
       </div>
-      <div class="comments">
-        <div *ngFor="let Comment of Comments">
-          <div class="commentHeader d-flex justify-content-between">
-            <div class="">
-              <h3>{{Comment.user}}</h3>
-            </div>
-            <div class="align-self-end">
-              <p>{{Comment.dateOfCreation}}</p>
-            </div>
-          </div>
-          <p>{{Comment.content}}</p>
-        </div>
+      <div>
+        Color de la sala:
+        <input type="color" name="backgroundColor" id="backgroundColor" [value]="UserRoom.backgroundColor" (change)="setBackgroundColor($event)" [disabled]="!UnityActive">
       </div>
     </div>
   </div>
@@ -63,22 +48,58 @@
             <button mat-menu-item (click)="getRooms('sortByComments')">
               <span>Ordenar por comentarios</span>
             </button>
-            <button mat-menu-item (click)="getRooms()">
+            <button mat-menu-item (click)="getRooms('sortByModificaction')">
               <span>Ordenar por modificaciones recientes</span>
             </button>
           </mat-menu>
         </h1>
 
       </div>
-
       <div class="roomImage" *ngFor="let Room of Rooms">
-        <img (click)="changeToRoomView(Room.id)" src="{{Room.imageOfRoom}}" alt="{{Room.nameOfRoom}}">
+        <img (click)="changeToRoomView(Room.id,Room.nameOfRoom)" src="{{Room.imageOfRoom}}" alt="{{Room.nameOfRoom}}">
       </div>
     </mat-drawer>
     <mat-drawer-content id="rightContent" class="overflow-hidden">
       <button mat-fab (click)="rightDrawer.toggle()" color="primary" class="leftButtonExpand">
         <mat-icon aria-hidden="false" aria-label="Example home icon" fontIcon="keyboard_double_arrow_left"></mat-icon>
       </button>
+      <div id="comments" class="overflow-visible">
+        <div id="commentsheaderandform">
+          <h2 *ngIf="ActualRoom!='' || RegisteredUser">Comentarios:</h2>
+          <form #commentForm="ngForm" (ngSubmit)="onCommentSubmit(commentForm.value)" *ngIf="RegisteredUser">
+            <input type="text" name="comment" id="comment" #comment="ngModel" required [(ngModel)]="commentModel.comment"
+              [disabled]="!RegisteredUser">
+            <button type="submit" [disabled]="commentForm.value.comment=='' || !RegisteredUser">
+              <mat-icon aria-hidden="false" aria-label="Send comment">send_outline_rounded</mat-icon>
+            </button>
+          </form>
+        </div>
+        <div class="comments">
+          <div *ngFor="let Comment of Comments">
+            <div class="commentHeader d-flex justify-content-between">
+              <div class="">
+                <h3>{{Comment.user}}</h3>
+              </div>
+              <div class="align-self-end">
+                <p>
+                  {{Comment.dateOfCreation}}
+                  <button mat-button [matMenuTriggerFor]="menu">
+                    <mat-icon>more_horiz</mat-icon>
+                  </button>
+                  <mat-menu #menu="matMenu">
+                    <button mat-menu-item (click)="reportComment(Comment._id)">
+                      <span>Reportar comentario</span>
+                    </button>
+                  </mat-menu>
+                </p>
+                
+              </div>
+            </div>
+            <p>{{Comment.content}}</p>
+          </div>
+        </div>
+      </div>
+      
     </mat-drawer-content>
   </mat-drawer-container>
 

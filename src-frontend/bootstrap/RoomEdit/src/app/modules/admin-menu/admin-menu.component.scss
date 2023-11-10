@@ -1,26 +1,6 @@
 @use "sass:math";
 
-#searchUser form{
-    display:flex;
-    justify-content: center !important;
-    justify-items: center !important;
-    
-}
-#searchUser form input{
-    border-color: black;
-    border-right: 0px;
-    width: math.percentage(math.div(30,144));
-    border-top-left-radius: 100px;
-    border-bottom-left-radius: 100px;
-    padding-left: 12px;
-    
-}
-#searchUser form button{
-    border-color: black;
-    border-top-right-radius: 100px;
-    border-bottom-right-radius: 100px;
-    padding-right: 12px;
-}
+
 .users{
     align-self: center;
     

@@ -1,5 +1,5 @@
 import { HttpClient } from '@angular/common/http';
-import { Component, OnInit } from '@angular/core';
+import { Component, EventEmitter, OnInit, Output } from '@angular/core';
 import { environment } from 'src/environments/environment.development';
 
 @Component({
@@ -12,20 +12,21 @@ export class UnityComponent implements OnInit {
   progress = 0;
   isReady = false;
   buildURL = "assets/ProyectoFinal/Build"
+  @Output() onUnityLoaded = new EventEmitter<any>();
   constructor(private http: HttpClient) { }
 
   ngOnInit(): void {
     this.http.get(environment.BACK_END+"/rooms/searchByUser/"+localStorage.getItem("RoomEditUser")).subscribe(
       a=> {
         console.log(a)
+        let b = ()=>this.onUnityLoaded.emit();
         window.onmessage = function(e:any) {
           if(e.data == "getUrl"){
             document.querySelector("iframe")?.contentWindow?.postMessage(environment.BACK_END+"|"+a,"*");
-            
           }
+          b()
         }
       }
     );
-    
   }
 }

@@ -38,6 +38,11 @@ let RoomSchema = new Schema({
         type:String,
         required:false,
         default:""
+    },
+    reported:{
+        type:Number,
+        required:true,
+        default:0
     }
 });
 

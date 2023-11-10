@@ -1,34 +1,45 @@
 <!DOCTYPE html>
 <html lang="en-us">
-  <head>
-    <meta charset="utf-8">
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-    <title>RoomEdit</title>
-    <script src="Build/UnityLoader.js"></script>
-    <script>
-      const unityInstance = UnityLoader.instantiate("unityContainer", "Build/ProyectoFinal.json");
-      function onUnityReady() {
-        window.top.postMessage("getUrl","*");
-      }
-      function sendUrl(url) {
-        unityInstance.SendMessage("GameObject","CheckUrl",url);
-      }
-      function changeColor(color){
-        unityInstance.SendMessage("GameObject","setBackgroudColor",color);
-      }
-      function setRoomid(roomId) {
-        unityInstance.SendMessage("GameObject","setRoomId",roomId)
-      }
-      window.onmessage = function(e) {
-        if(new URL(e.data.split("|")[0])) {
+
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+  <title>RoomEdit</title>
+  <script src="Build/UnityLoader.js"></script>
+  <script>
+    const unityInstance = UnityLoader.instantiate("unityContainer", "Build/ProyectoFinal.json");
+    
+    function onUnityReady() {
+      window.top.postMessage("getUrl", "*");
+    }
+
+    function sendUrl(url) {
+      unityInstance.SendMessage("GameObject", "CheckUrl", url);
+    }
+
+    function changeColor(color) {
+      unityInstance.SendMessage("GameObject", "setBackgroudColor", color);
+    }
+
+    function setRoomid(roomId) {
+      unityInstance.SendMessage("GameObject", "setRoomId", roomId)
+    }
+    window.onmessage = function (e) {
+      try {
+        if (/^#[0-9a-fA-F]{6}$/.test(e.data)) changeColor(e.data);
+        else if (new URL(e.data.split("|")[0])) {
           sendUrl(e.data.split("|")[0]);
           setRoomid(e.data.split("|")[1])
         }
-        else if (/^#[0-9a-fA-F]{6}$/.test(e.data)) changeColor(e.data);
+      } catch (error) {
+        console.log(error)
       }
-    </script>
-  </head>
-  <body style="margin: 0px; overflow-y: hidden;">
-    <div id="unityContainer" style="width: 100%; height: 100%; margin: auto; aspect-ratio: 4/3;"></div>
-  </body>
+    }
+  </script>
+</head>
+
+<body style="margin: 0px; overflow-y: hidden;">
+  <div id="unityContainer" style="width: 100%; height: 100%; margin: auto; aspect-ratio: 4/3;"></div>
+</body>
+
 </html>

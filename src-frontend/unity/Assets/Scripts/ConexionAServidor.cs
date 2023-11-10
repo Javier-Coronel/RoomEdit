@@ -17,6 +17,10 @@ public class ConexionAServidor : MonoBehaviour
     /// </summary>
     private GameObject imagenAPoner;
     /// <summary>
+    /// El orden en el que se posicionan las imagenes.
+    /// </summary>
+    private int orderOfImages = 1;
+    /// <summary>
     /// El componente que gira el icono de carga.
     /// </summary>
     [Tooltip("El componente que gira el icono de carga.")]
@@ -106,18 +110,27 @@ public class ConexionAServidor : MonoBehaviour
         }
 
     }
-    void AddAImage(Vector3 pos, Texture2D imagen, string url){
-                GameObject gameObject = new GameObject("img", typeof(SpriteRenderer));
-                gameObject.transform.position = pos;
-                gameObject.GetComponent<SpriteRenderer>().sprite = Sprite.Create(imagen, new Rect(new Vector2(0, 0), new Vector2(imagen.width, imagen.height)), new Vector2(0.5f, 0.5f));
-                gameObject.GetComponent<SpriteRenderer>().size = new Vector2(1, 1);
-                Imagen imageOfObject = new Imagen(gameObject.transform.position.x, gameObject.transform.position.y, url);
-                gameObject.AddComponent(typeof(DeleteImage));
-                gameObject.GetComponent<DeleteImage>().image = imageOfObject;
-                gameObject.GetComponent<DeleteImage>().conexionAServidor = this.gameObject.GetComponent<ConexionAServidor>();
-                imagenesToSave.Add(imageOfObject);
-                gameObject.GetComponent<SpriteRenderer>().sortingOrder = -32767 + imagenesToSave.ToArray().Length;
+
+    /// <summary>
+    /// Añade una imagen a la escena y a la lista de imagenes para guardar.
+    /// </summary>
+    /// <param name="pos">La posicion de la imagen.</param>
+    /// <param name="imagen">La textura de la imagen.</param>
+    /// <param name="url">La URL de la cual se a obtenido la imagen.</param>
+    void AddAImage(Vector3 pos, Texture2D imagen, string url)
+    {
+        GameObject gameObject = new GameObject("img", typeof(SpriteRenderer));
+        gameObject.transform.position = pos;
+        gameObject.GetComponent<SpriteRenderer>().sprite = Sprite.Create(imagen, new Rect(new Vector2(0, 0), new Vector2(imagen.width, imagen.height)), new Vector2(0.5f, 0.5f));
+        gameObject.GetComponent<SpriteRenderer>().size = new Vector2(1, 1);
+        Imagen imageOfObject = new Imagen(gameObject.transform.position.x, gameObject.transform.position.y, url);
+        gameObject.AddComponent(typeof(DeleteImage));
+        gameObject.GetComponent<DeleteImage>().image = imageOfObject;
+        gameObject.GetComponent<DeleteImage>().conexionAServidor = this.gameObject.GetComponent<ConexionAServidor>();
+        imagenesToSave.Add(imageOfObject);
+        gameObject.GetComponent<SpriteRenderer>().sortingOrder = -32767 + orderOfImages++;
     }
+
     // OnGUI es llamado varias veces por frame y sirve para renderizar y manejar los eventos de la interfaz
     private void OnGUI()
     {
@@ -140,9 +153,6 @@ public class ConexionAServidor : MonoBehaviour
             }
         }
     }
-
-
-    
 
     /// <summary>
     /// Carga las imagenes desde el servidor a partir de un array de strings con URLs.
@@ -330,7 +340,7 @@ public class ConexionAServidor : MonoBehaviour
                 loading.EndLoading();
                 showGUI = true;
             }
-        } 
+        }
     }
 
     /// <summary>

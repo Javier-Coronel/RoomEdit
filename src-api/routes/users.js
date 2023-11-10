@@ -86,7 +86,7 @@ router.get('/searchByCode/:code', function (req, res, next) {
 });
 
 /**
- * Actualiza el typo de usuario de un usuario.
+ * Actualiza el tipo de usuario de un usuario.
  */
 router.put('/changeTypeOfUser',
   body('id')

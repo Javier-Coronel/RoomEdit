@@ -54,6 +54,10 @@ router.post('/',
     });
   }
 );
+
+/**
+ * Obtiene una valoracion de un usuario a una sala.
+ */
 router.get('/findValoration/:name/:room',
   (req, res) => {
     User.findOne({
@@ -78,6 +82,9 @@ router.get('/findValoration/:name/:room',
     })
   })
 
+/**
+ * Obtiene las valoraciones dadas por un usuario.
+ */
 router.get('/findByUser/:user', (req, res) => {
   User.findOne({
     name: req.params.user
@@ -95,6 +102,10 @@ router.get('/findByUser/:user', (req, res) => {
     });
   })
 })
+
+/**
+ * Obtiene las valoraciones de una sala.
+ */
 router.get('/findByRoom/:room', (req, res) => {
   Valoration.find({
     room: req.params.room
@@ -103,6 +114,7 @@ router.get('/findByRoom/:room', (req, res) => {
     else res.sendStatus(200).json(valorations);
   })
 })
+
 /**
  * Elimina una valoracion de un usuario a una sala.
  */

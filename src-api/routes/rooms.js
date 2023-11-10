@@ -119,6 +119,7 @@ router.get('/userRoom/:id',
  */
 router.get('/sortByValorations',
   (req, res) => {
+
     Valoration.aggregate([{
       $group: {
         _id: "$room",
@@ -134,27 +135,36 @@ router.get('/sortByValorations',
     }]).sort('-count -modificationDate').exec(function (err, valorations) {
       if (err) res.status(500).send(err);
       else {
-        Room.populate(valorations, {
-          path: "room",
-          match: {
-            roomAsImage: {
-              $ne: ""
-            }
-          }
-        }, (err, valorations) => {
-          if (err) res.status(500).send(err);
-          else {
-            console.log(valorations)
-            User.populate(valorations, {
-              path: 'room.userId',
-              match: {
-                banned: false
-              }
-            }, (err, valorations) => {
-              if (err) res.status(500).send(err);
-              else res.status(200).json(valorations.filter((valoration) => valoration.room.roomAsImage != "" && valoration.room.userId))
+        Room.find().exec(function (err, rooms) {
+          let valoratedRoomsIds = valorations.map((i) => i.room._id.valueOf())
+          rooms.forEach(element => {
+            if (!valoratedRoomsIds.includes(element._id.valueOf())) valorations.push({
+              _id: new mongoose.Types.ObjectId(),
+              room: element._id,
+              count: 0
             })
-          }
+          });
+          Room.populate(valorations, {
+            path: "room",
+            match: {
+              roomAsImage: {
+                $ne: ""
+              }
+            }
+          }, (err, valorations) => {
+            if (err) res.status(500).send(err);
+            else {
+              User.populate(valorations, {
+                path: 'room.userId',
+                match: {
+                  banned: false
+                }
+              }, (err, valorations) => {
+                if (err) res.status(500).send(err);
+                else res.status(200).json(valorations.filter((valoration) => valoration.room.roomAsImage != "" && valoration.room.userId))
+              })
+            }
+          })
         })
       }
     })
@@ -179,35 +189,63 @@ router.get('/sortByComments',
         room: '$_id',
         count: 1
       }
-    }]).sort('-count -modificationDate').exec(function (err, valorations) {
+    }]).sort('-count -modificationDate').exec(function (err, comments) {
       if (err) res.status(500).send(err);
       else {
-        Room.populate(valorations, {
-          path: "room",
-          match: {
-            roomAsImage: {
-              $ne: ""
-            }
-          }
-        }, (err, valorations) => {
-          if (err) res.status(500).send(err);
-          else {
-            console.log(valorations)
-            User.populate(valorations, {
-              path: 'room.userId',
-              match: {
-                banned: false
-              }
-            }, (err, valorations) => {
-              if (err) res.status(500).send(err);
-              else res.status(200).json(valorations.filter((valoration) => valoration.room.roomAsImage != "" && valoration.room.userId))
+        Room.find().exec(function (err, rooms) {
+          let commentedRoomsIds = comments.map((i) => i.room._id.valueOf())
+          rooms.forEach(element => {
+            if (!commentedRoomsIds.includes(element._id.valueOf())) comments.push({
+              _id: new mongoose.Types.ObjectId(),
+              room: element._id,
+              count: 0
             })
-          }
+          });
+          Room.populate(comments, {
+            path: "room",
+            match: {
+              roomAsImage: {
+                $ne: ""
+              }
+            }
+          }, (err, comments) => {
+            if (err) res.status(500).send(err);
+            else {
+              console.log(comments)
+              User.populate(comments, {
+                path: 'room.userId',
+                match: {
+                  banned: false
+                }
+              }, (err, comments) => {
+                if (err) res.status(500).send(err);
+                else res.status(200).json(comments.filter((comment) => comment.room.roomAsImage != "" && comment.room.userId))
+              })
+            }
+          })
         })
       }
     })
   });
 
+/**
+ * Obtiene los comentarios que han sido reportados.
+ */
+router.get('/reportedRooms', function (req, res, next) {
+  Room.find({
+      reported: {
+        $gt: 0
+      }
+    })
+    .sort('-reported')
+    .populate({
+      path: 'userId'
+    })
+    .exec(function (err, rooms) {
+      if (err) res.status(500).send(err);
+      else res.status(200).json(rooms);
+    })
+})
 
 /**
  * Actualiza una sala con los datos dados.
@@ -273,6 +311,79 @@ router.put('/copyRoom',
     })
   })
 
+/**
+ * Cambia el nombre de una sala.
+ */
+router.put('/renameRoom',
+  body('id')
+  .exists()
+  .isString(),
+  body('name')
+  .exists()
+  .isString(),
+  function (req, res, next) {
+    console.log(req.body.id)
+    console.log(req.body.name)
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      return res.status(400).json({
+        errors: errors.array()
+      })
+    }
+    Room.findByIdAndUpdate(req.body.id,{
+      name:req.body.name
+    }).exec(function (err, room) {
+      if (err) res.status(500).send(err);
+      else res.status(200).json(room);
+    })
+  })
+
+/**
+ * Reporta una sala.
+ */
+router.put('/reportRoom',
+  body('id')
+  .exists()
+  .isString(),
+  function (req, res, next) {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      return res.status(400).json({
+        errors: errors.array()
+      })
+    }
+    Room.findByIdAndUpdate(req.body.id, {
+      $inc: {
+        reported: 1
+      }
+    }).exec(function (err, room) {
+      if (err) res.status(500).send(err);
+      else res.status(200).json(room);
+    })
+  }
+)
+
+/**
+ * Elimina los reportes de una sala.
+ */
+router.put('/unReportRoom',
+  body('id')
+  .exists()
+  .isString(),
+  function (req, res, next) {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      return res.status(400).json({
+        errors: errors.array()
+      })
+    }
+    Room.findByIdAndUpdate(req.body.id, {
+      reported: 0
+    }).exec(function (err, room) {
+      if (err) res.status(500).send(err);
+      else res.status(200).json(room);
+    })
+  })
 
 /**
  * Elimina todos los datos de la sala pasada,
@@ -294,7 +405,8 @@ router.delete('/',
       name: "",
       $unset: {
         originalRoom: 1
-      }
+      },
+      reported: 0
     }, async function (err, roominfo) {
       if (err) res.status(500).send(err);
       else {

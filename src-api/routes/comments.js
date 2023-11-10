@@ -106,7 +106,7 @@ router.get('/userid/:id', function (req, res, next) {
  */
 router.get('/roomofuser/:name', function (req, res, next) {
     User.findOne({
-        name:req.params.name
+        name: req.params.name
     }).exec(function (err, user) {
         Room.findOne({
             userId: user._id
@@ -114,22 +114,89 @@ router.get('/roomofuser/:name', function (req, res, next) {
             if (err) res.status(500).send(err);
             else {
                 Comment.find({
-                    room: room._id
-                })
-                .sort('dateOfCreation')
-                .populate({
-                    path: 'user',
-                    match: {
-                        banned: false
-                    }
-                }).exec(function (err, comments) {
-                    if (err) res.status(500).send(err);
-                    else res.status(200).json(comments.filter((comment) => comment.user));
-                })
+                        room: room._id
+                    })
+                    .sort('dateOfCreation')
+                    .populate({
+                        path: 'user',
+                        match: {
+                            banned: false
+                        }
+                    }).exec(function (err, comments) {
+                        if (err) res.status(500).send(err);
+                        else res.status(200).json(comments.filter((comment) => comment.user));
+                    })
             }
         })
     })
 });
+
+/**
+ * Obtiene los comentarios que han sido reportados.
+ */
+router.get('/reportedComments', function (req, res, next) {
+    Comment.find({
+            reported: {
+                $gt: 0
+            }
+        })
+        .sort('-reported')
+        .populate({
+            path: 'user'
+        })
+        .exec(function (err, comments) {
+            if (err) res.status(500).send(err);
+            else res.status(200).json(comments);
+        })
+})
+
+/**
+ * Reporta un comentario.
+ */
+router.put('/reportComment',
+    body('id')
+    .exists()
+    .isString(),
+    function (req, res, next) {
+        const errors = validationResult(req);
+        if (!errors.isEmpty()) {
+            return res.status(400).json({
+                errors: errors.array()
+            })
+        }
+        Comment.findByIdAndUpdate(req.body.id, {
+            $inc: {
+                reported: 1
+            }
+        }).exec(function (err, comment) {
+            if (err) res.status(500).send(err);
+            else res.status(200).json(comment);
+        })
+    }
+)
+
+/**
+ * Elimina los reportes de un comentario.
+ */
+router.put('/unReportComment',
+    body('id')
+    .exists()
+    .isString(),
+    function (req, res, next) {
+        const errors = validationResult(req);
+        if (!errors.isEmpty()) {
+            return res.status(400).json({
+                errors: errors.array()
+            })
+        }
+        Comment.findByIdAndUpdate(req.body.id, {
+            reported: 0
+        }).exec(function (err, comment) {
+            if (err) res.status(500).send(err);
+            else res.status(200).json(comment);
+        })
+    }
+)
 
 /**
  * Elimina un comentario pasando el id del comentario.

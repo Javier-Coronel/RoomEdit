@@ -19,6 +19,7 @@ export class AdminMenuComponent {
 
   ngOnInit() {
     this.searchAllUsers();
+    document.getElementById("verificationOfChanges")!.style.zIndex="-1"
   }
   // Esta funcion buscara todos los usuarios de la base de datos
   searchAllUsers() {
@@ -65,6 +66,7 @@ export class AdminMenuComponent {
     let userLogged = localStorage.getItem("RoomEditUser");
     if (userLogged) {
       let verificationOfUserChangeDiv = document.getElementById("verificationOfChanges");
+      if (verificationOfUserChangeDiv != null) verificationOfUserChangeDiv.style.zIndex="2"
       console.log(userLogged)
       try {
         this.http.put(environment.BACK_END + "/users/changeTypeOfUser", { id: id, type: type.value }, { headers: headers }).subscribe({
@@ -89,6 +91,7 @@ export class AdminMenuComponent {
         setTimeout(() => {
           if (verificationOfUserChangeDiv != null) {
             verificationOfUserChangeDiv.style.backgroundColor = "";
+            verificationOfUserChangeDiv.style.zIndex="-1"
             verificationOfUserChangeDiv.innerText = ""
           }
         }, 5000)

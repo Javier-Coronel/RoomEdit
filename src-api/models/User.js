@@ -5,7 +5,8 @@ let SALT_WORK_FACTOR = 10;
 let UserSchema = new Schema({
     name: {
         type: String,
-        required: true
+        required: true,
+        unique : true
     },
     email: {
         type: String,
@@ -13,7 +14,8 @@ let UserSchema = new Schema({
     },
     code: {
         type: String,
-        required: true
+        required: true,
+        unique : true
     },
     password: {
         type: String,

@@ -44,21 +44,21 @@ mat-slide-toggle{
     width: 85.9375%;
     padding-left: 7% !important;
 }
-.comment div div div p{
-    display: grid;
-    width: 150px;
-    grid-template-columns: 1fr 1fr;
-    align-items: center !important;
-}
-.infoOfUser{
+.infoOfUsers{
     width: 44.4444444444%;
 }
 .verificationOfChanges{
     flex-basis: 100%;
+}
+#searchUser form input{
+    width: math.percentage(math.div(30,60));
 }
 .roomImage{
     aspect-ratio: 19/10;
     img{
         width: 100%;
     }
+}
+h2{
+    text-align: center;
 }

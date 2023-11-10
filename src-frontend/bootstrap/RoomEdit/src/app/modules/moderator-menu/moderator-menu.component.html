@@ -1,6 +1,21 @@
 <div class="modMenu d-flex justify-content-between">
   <div class="users">
     <div id="verificationOfChanges"></div>
+    <div id="searchUser" class="">
+      <form #commentForm="ngForm" (ngSubmit)="onSearch(commentForm.value)">
+        <input type="text" name="user" id="user" placeholder="Buscar usuario" #user="ngModel"
+          [(ngModel)]="userModel.user">
+        <button type="submit">
+          <mat-icon aria-hidden="false" aria-label="Search user">search</mat-icon>
+        </button>
+      </form>
+    </div>
+    <div class="User">
+      <button (click)="searchReportedRooms()" type="submit" mat-button>Salas reportadas</button>
+    </div>
+    <div class="User">
+      <button (click)="searchReportedComments()" type="submit" mat-button>Comentarios reportados</button>
+    </div>
     <div *ngFor="let User of Users" class="User">
       <mat-slide-toggle [checked]="User.banned" (change)="updateUser(User.name, $event.checked, User.id)"
         class="datachanger">
@@ -8,24 +23,35 @@
       <button (click)="dataFromUser(User.id, User.name)" type="submit" mat-button>{{User.name}}</button>
     </div>
   </div>
-  <div class="infoOfUser" *ngIf="UserInViewId != ''">
-    <div class="Room">
-      <h1>
-        Sala del usuario
-        <button mat-button [matMenuTriggerFor]="roomOptions"><mat-icon>more_horiz</mat-icon></button>
-                <mat-menu #roomOptions="matMenu">
-                  <button mat-menu-item (click)="deleteRoom(RoomOfUserInView)">
-                    <span>Eliminar sala</span>
-                  </button>
-                </mat-menu>
-      </h1>
+  <div class="infoOfUsers">
+    <h1 *ngIf="UserInViewId == '' && Rooms.length != 0">Salas reportadas</h1>
+    <div class="Room" *ngFor="let Room of Rooms">
+      <h2>
+        Sala de {{Room.user}}: {{Room.name}}
+        <button mat-button [matMenuTriggerFor]="roomOptions">
+          <mat-icon>more_horiz</mat-icon>
+        </button>
+        <mat-menu #roomOptions="matMenu">
+          <button mat-menu-item (click)="deleteRoom(Room._id)">
+            <span>Eliminar sala</span>
+          </button>
+          <button mat-menu-item (click)="unReportRoom(Room._id)">
+            <span>Quitar los reportes de la sala</span>
+          </button>
+        </mat-menu>
+      </h2>
       <div class="roomImage">
-          <img src="{{RoomImageOfUserInView}}" alt="">
+        <img src="{{Room.image}}" alt="{{Room.name}}">
       </div>
     </div>
     <div class="Comments">
-      <h1>Comentarios recientes</h1>
-      <div *ngIf="Comments.length == 0">No hay comentarios de este usuario</div>
+      <div *ngIf="UserInViewId != ''">
+        <h1>Comentarios recientes</h1>
+        <div *ngIf="Comments.length == 0">No hay comentarios de este usuario</div>
+      </div>
+      <div *ngIf="UserInViewId == '' && Comments.length != 0">
+        <h1>Comentarios reportados</h1>
+      </div>
       <div *ngFor="let Comment of Comments" class="comment">
         <div>
           <div class="commentHeader d-flex justify-content-between">
@@ -35,10 +61,15 @@
             <div class="align-self-end">
               <p>
                 {{Comment.dateOfCreation}}
-                <button mat-button [matMenuTriggerFor]="menu"><mat-icon>more_horiz</mat-icon></button>
+                <button mat-button [matMenuTriggerFor]="menu">
+                  <mat-icon>more_horiz</mat-icon>
+                </button>
                 <mat-menu #menu="matMenu">
                   <button mat-menu-item (click)="deleteComment(Comment._id)">
                     <span>Eliminar comentario</span>
+                  </button>
+                  <button mat-menu-item (click)="unReportComment(Comment._id)">
+                    <span>Quitar los reportes del comentario</span>
                   </button>
                 </mat-menu>
               </p>

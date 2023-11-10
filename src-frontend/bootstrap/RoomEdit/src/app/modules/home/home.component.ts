@@ -9,19 +9,34 @@ import { environment } from 'src/environments/environment.development';
   styleUrls: ['./home.component.scss']
 })
 export class HomeComponent {
+  /**Comprueba que el usuario esta logueado. */
   RegisteredUser: boolean = false;
+  /**Las salas cargadas. */
   Rooms: Array<{ imageOfRoom: string, nameOfRoom: string, id: string }> = [];
-  Comments: Array<{ user: any, dateOfCreation: any, content: any }> = [];
+  /**Los comentarios de la sala actual. */
+  Comments: Array<{ _id: any, user: any, dateOfCreation: any, content: any }> = [];
+  /**La sala que esta viendo el usuario si no se esta editando su sala. */
   ActualRoom: string = (sessionStorage.getItem("roomID") ?? "").toString();
+  /**La ruta de la sala que esta viendo el usuario si no se esta editando su sala. */
   RoomImage: string = environment.BACK_END + "/rooms/" + (sessionStorage.getItem("roomID") ?? "").toString() + ".png";
+  /**El nombre de la sala que esta viendo el usuario si no se esta editando su sala. */
+  RoomName: string = sessionStorage.getItem("roomName")!
+  /**El modelo de comentario que puede hacer un usuario. */
+  commentModel = { comment: "" };
+  /**Objeto que contiene el nombre y el color de la sala del usuario */
+  UserRoom = {name:"",backgroundColor:"#000000"}
+  UnityActive: boolean = false;
   constructor(private http: HttpClient) {
 
   }
+
   ngOnInit() {
+    
     if (localStorage.getItem("RoomEditUser")) {
       console.log(this.ActualRoom)
       this.getComments();
       this.RegisteredUser = true;
+      this.getRoom();
     }
     this.getRooms();
     console.log(this.Rooms)
@@ -29,33 +44,54 @@ export class HomeComponent {
 
   /**
    * Obtiene todas las salas.
+   * @param type El orden en el que se van a obtener las salas.
    */
   getRooms(type?: string) {
     this.Rooms = [];
-    if (!type || type=="sortByModificaction") {
+    let b;
+    if (!type || type == "sortByModificaction") {
       this.http.get(environment.BACK_END + "/rooms/").subscribe(
         a => {
-          console.log(a);
-          let b = JSON.parse(JSON.stringify(a));
+          b = JSON.parse(JSON.stringify(a));
           b.forEach((element: { roomAsImage: string; name: string; _id: string; userId: { name: string; }; }) => {
-            try {
-              this.Rooms.push({ 'imageOfRoom': environment.BACK_END + "/rooms/" + element.roomAsImage, 'nameOfRoom': (element.name) ? element.name : "Sala de " + element.userId.name, 'id': element._id });
-            } catch (error) { }
+            this.pushRoom(element)
           });
         }
       );
     }
-    else if(type == "sortByValorations" || type=="sortByComments"){
-      this.http.get(environment.BACK_END + "/rooms/" + type).subscribe(a=>{
-        let b = JSON.parse(JSON.stringify(a));
-        console.log(b)
-          b.forEach((element:{ room:{ roomAsImage: string; name: string; _id: string; userId: { name: string; }; }}) => {
-            try {
-              this.Rooms.push({ 'imageOfRoom': environment.BACK_END + "/rooms/" + element.room.roomAsImage, 'nameOfRoom': (element.room.name) ? element.room.name : "Sala de " + element.room.userId.name, 'id': element.room._id });
-            } catch (error) { }
+    else if (type == "sortByValorations" || type == "sortByComments") {
+      this.http.get(environment.BACK_END + "/rooms/" + type).subscribe(
+        a => {
+          b = JSON.parse(JSON.stringify(a));
+          b.forEach((element: { room: { roomAsImage: string; name: string; _id: string; userId: { name: string; }; } }) => {
+            this.pushRoom(element.room)
           });
-      })
+        })
     }
+  }
+
+  /**
+   * 
+   */
+  getRoom(){
+    this.http.get(environment.BACK_END + "/rooms/getAllDataByUser/" + localStorage.getItem("RoomEditUser")).subscribe(
+      a=> {
+        let b = JSON.parse(JSON.stringify(a));
+        this.UserRoom.name=b.name
+        this.UserRoom.backgroundColor=b.backgroundColor
+        console.log(this.UserRoom)
+      }
+    )
+  }
+
+  /**
+   * Añade una sala al array de salas.
+   * @param room La sala a añadir.
+   */
+  pushRoom(room: { roomAsImage: string; name: string; _id: string; userId: { name: string; }; }) {
+    try {
+      this.Rooms.push({ 'imageOfRoom': environment.BACK_END + "/rooms/" + room.roomAsImage, 'nameOfRoom': (room.name) ? room.name : "Sala de " + room.userId.name, 'id': room._id });
+    } catch (error) { }
   }
 
   /**
@@ -68,11 +104,11 @@ export class HomeComponent {
       a => {
         console.log(a);
         let b = JSON.parse(JSON.stringify(a));
-        b.forEach((element: { dateOfCreation: string; user: { name: any; }; content: any; }) => {
+        b.forEach((element: { _id:any, dateOfCreation: string; user: { name: any; }; content: any; }) => {
           let date: any = element.dateOfCreation.split('-');
           date = date[2].split('T')[0] + '/' + date[1] + '/' + date[0]
           try {
-            this.Comments.push({ 'user': element.user.name, 'dateOfCreation': date, 'content': element.content });
+            this.Comments.push({ '_id':element._id,'user': element.user.name, 'dateOfCreation': date, 'content': element.content });
           } catch (error) { }
           console.log(this.Comments)
         });
@@ -80,18 +116,22 @@ export class HomeComponent {
     );
   }
 
-  commentModel = { comment: "" };
-
-  changeToRoomView(id: string) {
+  /**
+   * Cambia la sala que se esta viendo.
+   * @param id El id de la sala.
+   */
+  changeToRoomView(id: string, name:string) {
     this.ActualRoom = id;
     sessionStorage.setItem("roomID", id);
-    this.RoomImage = environment.BACK_END + "/rooms/" + id + ".png"
+    sessionStorage.setItem("roomName",name);
+    this.RoomImage = environment.BACK_END + "/rooms/" + id + ".png";
+    this.RoomName = name;
     this.getComments();
   }
 
   /**
    * Envia un comentario al servidor para ser posteado.
-   * @param comment El contenido del comentario
+   * @param comment El contenido del comentario.
    */
   onCommentSubmit(comment: { comment: string }) {
     const headers = new HttpHeaders({
@@ -120,6 +160,22 @@ export class HomeComponent {
         );
       }
     }
+  }
+  reportComment(id:any){
+    this.http.put(environment.BACK_END + "/comments/reportComment", {"id":id}).subscribe()
+  }
+  ActivateUnityOptions(){
+    this.UnityActive=true
+  }
+  changeRoomName(e:any){
+    this.http.get(environment.BACK_END + "/rooms/searchByUser/" + localStorage.getItem("RoomEditUser")).subscribe(a=>{
+      console.log(a)
+      this.http.put(environment.BACK_END + "/rooms/renameRoom", {id:a, name:e.target.value}).subscribe()
+    })
+  }
+  setBackgroundColor(e:any){
+    console.log(e.target.value)
+      document.querySelector("iframe")?.contentWindow?.postMessage(e.target.value,"*");
   }
 }
 

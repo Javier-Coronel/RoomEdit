@@ -1,10 +1,13 @@
 <div>
+    <button (click)="reportRoom()" *ngIf="RegisteredUser">
+        <mat-icon fontIcon="report"></mat-icon>
+    </button>
     {{RoomName}}
-    <button (click)="ValorationOfRoom()">
+    <button (click)="ValorationOfRoom()" *ngIf="RegisteredUser">
         <mat-icon class="material-symbols-outlined" fontIcon="star"></mat-icon>
     </button>
-    <button (click)="CopyRoom()">
+    <button (click)="CopyRoom()" *ngIf="RegisteredUser">
         <mat-icon class="fliped-horizontal" fontIcon="content_copy_outline_rounded"></mat-icon>
     </button>
 </div>
-<img id="roomImage" [src]="RoomImage" alt="">
+<img id="roomImage" [src]="RoomImage" [alt]="RoomName">

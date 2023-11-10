@@ -12,9 +12,16 @@ export class NavigationComponent {
 
   }
   LoggedUser: { name: any, type: any, id: any } | null = null;
+  classToSearch = "mdc-button mat-mdc-button mat-unthemed mat-mdc-button-base"
   ngOnInit() {
     if (localStorage.getItem("RoomEditUser")) {
       this.getLoggedUser();
+    }else{
+      setTimeout(()=>{
+        let links = document.getElementById("notLogged")?.getElementsByClassName(this.classToSearch) ?? [];
+        this.searchActualLocation(links);
+      })
+      
     }
   }
   getLoggedUser() {
@@ -22,20 +29,38 @@ export class NavigationComponent {
       a => {
         let b = JSON.parse(JSON.stringify(a));
         this.LoggedUser = { 'name': b.name, 'type': b.type, 'id': b._id };
-        console.log(this.LoggedUser)
+        if (this.LoggedUser != null) {
+          setTimeout(() => {
+            let links = document.getElementById("logged")?.getElementsByClassName(this.classToSearch) ?? [];
+            if (window.location.pathname == "/") {
+              links[0].setAttribute("class", "mdc-button mdc-button--outlined mat-mdc-outlined-button mat-unthemed mat-mdc-button-base");
+            } else {
+              this.searchActualLocation(links);
+            }
+          })
+        }
       }
     )
   }
-  logout(){
+  searchActualLocation(links: any) {
+    let a = links?.length
+    for (let index = 0; index < (a ?? 0); index++) {
+      const element = links[index];
+      if (element.getAttribute("href") == window.location.pathname) {
+        element.setAttribute("class", "mdc-button mdc-button--outlined mat-mdc-outlined-button mat-unthemed mat-mdc-button-base")
+        break;
+      }
+    }
+  }
+  logout() {
     localStorage.clear();
     window.location.href = 'http://' + window.location.host;
   }
-  openRoom(){
-    console.log(window.location.pathname)
-    if(window.location.pathname=='/' && sessionStorage.getItem("roomID")){
+  openRoom() {
+    if (window.location.pathname == '/' && sessionStorage.getItem("roomID")) {
       sessionStorage.removeItem("roomID");
       window.location.href = window.location.href;
-    }else if(window.location.pathname!='/'){
+    } else if (window.location.pathname != '/') {
       sessionStorage.removeItem("roomID");
       window.location.href = 'http://' + window.location.host;
     }
