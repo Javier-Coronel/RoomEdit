@@ -1,5 +1,5 @@
 export const environment = {
     production: false,
     apiKey: 'devKey',
-    BACK_END: 'http://localhost:5000'
+    BACK_END: 'https://roomedit-production.up.railway.app'
 };
