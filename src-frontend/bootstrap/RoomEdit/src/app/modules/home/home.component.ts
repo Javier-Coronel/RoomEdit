@@ -26,6 +26,8 @@ export class HomeComponent {
   /**Objeto que contiene el nombre y el color de la sala del usuario */
   UserRoom = {name:"",backgroundColor:"#000000"}
   UnityActive: boolean = false;
+  UserValoration:boolean = sessionStorage.getItem("UserValoration")!==null;
+  RoomLoading:boolean = true
   constructor(private http: HttpClient) {
 
   }
@@ -126,7 +128,23 @@ export class HomeComponent {
     sessionStorage.setItem("roomName",name);
     this.RoomImage = environment.BACK_END + "/rooms/" + id + ".png";
     this.RoomName = name;
+    this.http.get(environment.BACK_END + `/valorations/findValoration/${localStorage.getItem("RoomEditUser")}/${id}`).subscribe(
+      a => {
+        console.log(a)
+        if(a !== null)sessionStorage.setItem("UserValoration","");
+        else sessionStorage.removeItem("UserValoration")
+        this.UserValoration = sessionStorage.getItem("UserValoration")!==null
+        console.log("Prueba 4 " + (sessionStorage.getItem("UserValoration") !== null))
+        console.log(this.UserValoration)
+        
+      }
+    )
+    this.RoomLoading=false;
+    setTimeout(()=>{
+      this.RoomLoading=true
+    })
     this.getComments();
+    //window.location.href = window.location.href;
   }
 
   /**

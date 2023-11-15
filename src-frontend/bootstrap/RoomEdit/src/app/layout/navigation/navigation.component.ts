@@ -21,7 +21,6 @@ export class NavigationComponent {
         let links = document.getElementById("notLogged")?.getElementsByClassName(this.classToSearch) ?? [];
         this.searchActualLocation(links);
       })
-      
     }
   }
   getLoggedUser() {

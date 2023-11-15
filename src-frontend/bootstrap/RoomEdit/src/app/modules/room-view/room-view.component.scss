@@ -2,3 +2,16 @@
     aspect-ratio: 19/10;
     width: 100%;
 }
+h1{
+    display: inline;
+}
+div h1{
+    width: 60%;
+}
+button{
+    border: 0;
+    background-color: #ffffff;
+}
+div div :first-child{
+    padding-right: 80%;
+}

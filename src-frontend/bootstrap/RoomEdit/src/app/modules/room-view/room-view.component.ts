@@ -10,7 +10,7 @@ import { environment } from 'src/environments/environment.development';
 export class RoomViewComponent {
   @Input() RoomImage: string = environment.BACK_END + "/rooms/" + sessionStorage.getItem("roomID") + ".png";
   @Input() RoomName: string = sessionStorage.getItem("roomName")!;
-  UserValoration: boolean = false;
+  @Input() UserValoration: boolean = sessionStorage.getItem("UserValoration") !== null;
   RegisteredUser: boolean = false;
   constructor(private http: HttpClient) {
 
@@ -19,32 +19,43 @@ export class RoomViewComponent {
   ngOnInit() {
     if (localStorage.getItem("RoomEditUser")) {
       this.RegisteredUser = true
-      this.http.get(environment.BACK_END + `/valorations/findValoration/${localStorage.getItem("RoomEditUser")}/${sessionStorage.getItem("roomID")}`).subscribe(
-        a => {
-          this.UserValoration = a != null
-        }
-      )
     }
+    console.log("Prueba 1 " + (sessionStorage.getItem("UserValoration") !== null))
+    console.log(this.UserValoration)
     
   }
 
   ValorationOfRoom() {
-    let body = new HttpParams();
-    if (sessionStorage.getItem("RoomEditUser") != null) {
-      body = body.append("name", (localStorage.getItem("RoomEditUser") ?? "").toString())
-    }
-    if (sessionStorage.getItem("roomID") != null) {
-      body = body.append("room", (sessionStorage.getItem("roomID") ?? "").toString())
-    }
-    this.http.get(environment.BACK_END + `/valorations/findValoration/${localStorage.getItem("RoomEditUser")}/${sessionStorage.getItem("roomID")}`).subscribe(
-      a => {
-        if (a == null) {
-          this.http.post(environment.BACK_END + "/valorations/", { name: localStorage.getItem("RoomEditUser"), room: sessionStorage.getItem("roomID"), password: localStorage.getItem("RoomEditPassword") }).subscribe()
-        } else {
-          this.http.delete(environment.BACK_END + "/valorations/", { body: { name: localStorage.getItem("RoomEditUser"), room: sessionStorage.getItem("roomID"), password: localStorage.getItem("RoomEditPassword") } }).subscribe()
+    if (localStorage.getItem("RoomEditUser") !== null && sessionStorage.getItem("roomID") !== null) {
+      this.http.get(environment.BACK_END + `/valorations/findValoration/${localStorage.getItem("RoomEditUser")}/${sessionStorage.getItem("roomID")}`).subscribe(
+        a => {
+          if (a == null) {
+            this.http.post(environment.BACK_END + "/valorations/", { name: localStorage.getItem("RoomEditUser"), room: sessionStorage.getItem("roomID"), password: localStorage.getItem("RoomEditPassword") }).subscribe(
+              a => {
+                this.UserValoration = true
+                sessionStorage.setItem("UserValoration", "");
+                console.log("Prueba 2 " + (sessionStorage.getItem("UserValoration") !== null))
+                console.log(this.UserValoration)
+              }
+            )
+          } else {
+            let quitValoration = () => {
+              this.UserValoration = false
+              sessionStorage.removeItem("UserValoration")
+              console.log("Prueba 3 " + (sessionStorage.getItem("UserValoration") !== null))
+              console.log(this.UserValoration)
+            }
+            this.http.delete(environment.BACK_END + "/valorations/", { body: { name: localStorage.getItem("RoomEditUser"), room: sessionStorage.getItem("roomID"), password: localStorage.getItem("RoomEditPassword") } }).subscribe({
+              next(a) { },
+              error(error) {
+                quitValoration()
+              }
+            }
+            )
+          }
         }
-      }
-    )
+      )
+    }
   }
 
   CopyRoom() {
@@ -53,7 +64,7 @@ export class RoomViewComponent {
     }).subscribe()
   }
 
-  reportRoom(){
-    this.http.put(environment.BACK_END + "/rooms/reportRoom", {"id":sessionStorage.getItem("roomID")?.toString()}).subscribe()
+  reportRoom() {
+    this.http.put(environment.BACK_END + "/rooms/reportRoom", { "id": sessionStorage.getItem("roomID")?.toString() }).subscribe()
   }
 }

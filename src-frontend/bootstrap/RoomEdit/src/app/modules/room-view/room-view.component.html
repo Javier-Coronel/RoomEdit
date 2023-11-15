@@ -1,13 +1,16 @@
-<div>
-    <button (click)="reportRoom()" *ngIf="RegisteredUser">
-        <mat-icon fontIcon="report"></mat-icon>
+<div class="d-flex justify-content-around">
+  <button (click)="reportRoom()" *ngIf="RegisteredUser" aria-label="Reportar la imagen">
+    <mat-icon fontIcon="report"></mat-icon>
+  </button>
+  <h1>{{RoomName.length < 40 ? RoomName : RoomName.substring(0,40) + "..."}}</h1>
+  <div class="d-flex justify-content-around">
+    <button (click)="ValorationOfRoom()" *ngIf="RegisteredUser" aria-label="Valorar la sala">
+      <mat-icon *ngIf="UserValoration" class="material-symbols" fontIcon="star_rate"></mat-icon>
+      <mat-icon *ngIf="!UserValoration" class="material-symbols" fontIcon="star_border"></mat-icon>
     </button>
-    {{RoomName}}
-    <button (click)="ValorationOfRoom()" *ngIf="RegisteredUser">
-        <mat-icon class="material-symbols-outlined" fontIcon="star"></mat-icon>
+    <button (click)="CopyRoom()" *ngIf="RegisteredUser" aria-label="Copiar la sala">
+      <mat-icon class="fliped-horizontal" fontIcon="content_copy_outline_rounded"></mat-icon>
     </button>
-    <button (click)="CopyRoom()" *ngIf="RegisteredUser">
-        <mat-icon class="fliped-horizontal" fontIcon="content_copy_outline_rounded"></mat-icon>
-    </button>
+  </div>
 </div>
-<img id="roomImage" [src]="RoomImage" [alt]="RoomName">
+<img id="roomImage" [src]="RoomImage" [alt]="RoomName.length < 40 ? RoomName : RoomName.substring(0,40) + '...'">
