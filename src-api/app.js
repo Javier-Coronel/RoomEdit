@@ -48,6 +48,21 @@ app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
+if(userModel.countDocuments() == 0)User.create({
+  name: "admin",
+  email: "",
+  code: "admin",
+  password: "admin",
+  type: "Admin"
+}).then(user => {
+  Room.create({
+    userId: user._id,
+    name:"",
+    images:[],
+    roomAsImage:""
+  }).then()
+});
+
 app.use('/users', usersRouter);
 app.use('/rooms', roomsRouter);
 app.use('/valorations',valorationsRouter);
