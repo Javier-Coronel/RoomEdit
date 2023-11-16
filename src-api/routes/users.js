@@ -17,9 +17,6 @@ router.post('/',
   body('name')
   .exists()
   .isString(),
-  body('email', "Este campo debe ser un email")
-  .exists()
-  .isEmail(),
   body('password')
   .exists()
   .isString(),
@@ -36,7 +33,6 @@ router.post('/',
 
     User.create({
       name: req.body.name,
-      email: req.body.email,
       code: req.body.name,
       password: req.body.password
     }).then(user => {

@@ -26,7 +26,10 @@ const mongoose = require('mongoose');
 const { title } = require('process');
 mongoose.set('strictQuery', false); //requerido para quitar el warning
 mongoose.connect(process.env.DB_URI, { useNewUrlParser: true })
-  .then(() => console.log('connection successful'))
+  .then(() => {
+    console.log('connection successful')
+    checkUsers()
+  })
   .catch((err) => console.error(err));
 
 mongoose.connection;
@@ -42,33 +45,43 @@ app.use(function(req, res, next) {
  next();
 });
 
+
+
 app.use(logger('dev'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
-if(userModel.countDocuments() == 0)User.create({
-  name: "admin",
-  email: "",
-  code: "admin",
-  password: "admin",
-  type: "Admin"
-}).then(user => {
-  Room.create({
-    userId: user._id,
-    name:"",
-    images:[],
-    roomAsImage:""
-  }).then()
-});
+
+
+let checkUsers = ()=> {
+  userModel.count().then((number)=>{
+    if(number == 0)userModel.create({
+      name: "admin",
+      code: "admin",
+      password: "admin",
+      type: "Admin"
+    }).then(user => {
+      roomModel.create({
+        userId: user._id,
+        name:"",
+        images:[],
+        roomAsImage:""
+      }).then()
+    });
+     
+  })
+  
+  
+  
+}
 
 app.use('/users', usersRouter);
 app.use('/rooms', roomsRouter);
 app.use('/valorations',valorationsRouter);
 app.use('/comments',commentsRouter)
 app.use('/images',imagesRouter)
-
 /*
 app.get('/', (req, res) => {
   res.render('index',{title:""});
@@ -93,3 +106,4 @@ app.use(function(err, req, res, next) {
 });*/
 
 module.exports = app;
+
