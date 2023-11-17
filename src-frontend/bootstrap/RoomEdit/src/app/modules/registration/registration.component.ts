@@ -14,6 +14,7 @@ export class RegistrationComponent {
   }
   model = new UserInRegistration(1,"","","","");
   submitted = false;
+  rute=environment.rute
   onSubmit(user:{name:string,email:string,password:string,confirmPassword:string}){
     this.submitted=true;
     const headers = new HttpHeaders({

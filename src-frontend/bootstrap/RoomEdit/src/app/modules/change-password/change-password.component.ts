@@ -13,6 +13,9 @@ export class ChangePasswordComponent {
   model = { id: "", password: "", confirmPassword: "" };
 
   submitted = false;
+
+  rute=environment.rute;
+
   onSubmit(user: { password: string, confirmPassword: string }) {
     if (user.password == user.confirmPassword) {
       this.submitted = true;
@@ -30,7 +33,7 @@ export class ChangePasswordComponent {
         if (JSON.stringify(a) === '{"message":"Ok"}') {
           console.log(a);
           localStorage.setItem("RoomEditPassword", changePassword.password);
-          window.location.href = 'http://' + window.location.host;
+          window.location.href = 'http://' + window.location.host + this.rute;
         }
       });
     }

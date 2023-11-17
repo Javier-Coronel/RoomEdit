@@ -14,6 +14,7 @@ export class LoginComponent {
   }
   model = new User("","");
   submitted = false;
+  rute=environment.rute;
   onSubmit(user:{name:string,password:string}){
     this.submitted=true;
     const headers = new HttpHeaders({
@@ -28,7 +29,7 @@ export class LoginComponent {
         console.log(a);
         localStorage.setItem("RoomEditUser",user.name);
         localStorage.setItem("RoomEditPassword",user.password);
-        window.location.href = 'http://' + window.location.host;
+        window.location.href = 'http://' + window.location.host + this.rute;
       }
     });
     

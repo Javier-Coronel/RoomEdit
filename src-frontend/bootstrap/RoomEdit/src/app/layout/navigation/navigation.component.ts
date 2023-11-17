@@ -13,6 +13,7 @@ export class NavigationComponent {
   }
   LoggedUser: { name: any, type: any, id: any } | null = null;
   classToSearch = "mdc-button mat-mdc-button mat-unthemed mat-mdc-button-base"
+  rute=environment.rute
   ngOnInit() {
     if (localStorage.getItem("RoomEditUser")) {
       this.getLoggedUser();
@@ -45,7 +46,7 @@ export class NavigationComponent {
     let a = links?.length
     for (let index = 0; index < (a ?? 0); index++) {
       const element = links[index];
-      if (element.getAttribute("href") == window.location.pathname) {
+      if (element.getAttribute("[href]") == window.location.pathname + this.rute) {
         element.setAttribute("class", "mdc-button mdc-button--outlined mat-mdc-outlined-button mat-unthemed mat-mdc-button-base")
         break;
       }
@@ -53,15 +54,15 @@ export class NavigationComponent {
   }
   logout() {
     localStorage.clear();
-    window.location.href = 'http://' + window.location.host;
+    window.location.href = 'http://' + window.location.host + this.rute;
   }
   openRoom() {
     if (window.location.pathname == '/' && sessionStorage.getItem("roomID")) {
       sessionStorage.removeItem("roomID");
-      window.location.href = window.location.href;
+      window.location.href = window.location.href + this.rute;
     } else if (window.location.pathname != '/') {
       sessionStorage.removeItem("roomID");
-      window.location.href = 'http://' + window.location.host;
+      window.location.href = 'http://' + window.location.host + this.rute;
     }
   }
 }
