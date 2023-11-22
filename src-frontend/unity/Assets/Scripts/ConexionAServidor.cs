@@ -67,6 +67,11 @@ public class ConexionAServidor : MonoBehaviour
     /// Si esta activo enseña la GUI.
     /// </summary>
     private bool showGUI = false;
+
+    [Tooltip("La imagen inaccesible")]
+    public List<UrlToTexture> InaccessibleImages;
+
+    private bool WaitingForInaccessibleImage = true;
     /// <summary>
     /// Metodo para comprobar que la parte de unity se ha iniciado para pedir datos a la pagina web.
     /// </summary>
@@ -77,12 +82,12 @@ public class ConexionAServidor : MonoBehaviour
     void Start()
     {
         ChangeInputMode();
-        #if !UNITY_EDITOR && UNITY_WEBGL
+#if !UNITY_EDITOR && UNITY_WEBGL
             UnityIsReady();
-        #elif UNITY_EDITOR
+#elif UNITY_EDITOR
             CheckUrl("http://localhost:5000");
             roomid = "645c3a1870fb865a1596c843";
-        #endif
+#endif
 
         //print(Screen.width + " | " + Screen.height);
         imagenAPoner = new GameObject("imagenAPoner", typeof(SpriteRenderer));
@@ -141,16 +146,24 @@ public class ConexionAServidor : MonoBehaviour
             float[] valoresDePantalla = {/*100/640=*/0.15625f * Screen.width, /*20/640=*/0.03125f * Screen.width, /*20/480=*/1f / 24f * Screen.height, /*80/640=*/0.125f * Screen.width, /*115/480=*/23f / 96f * Screen.height, /*31/32=*/0.9375f * Screen.width };
             GUI.Box(new Rect(0, 0, 1.1f * Screen.width, 0.3f * Screen.height), Texture2D.whiteTexture);
             hSbarValue = GUI.HorizontalScrollbar(new Rect(new Vector2(valoresDePantalla[1], valoresDePantalla[4]), new Vector2(valoresDePantalla[5], 1 / 48 * Screen.height)), hSbarValue, 6, 0f, imagenes.Count + ((imagenes.Count >= 7) ? (imagenes.Count - 7) * 0.25f : 0));
-            foreach (Texture2D img in imagenes)
+            if (imagenes.ToArray().Length != 0)
             {
-                if (GUI.Button(new Rect(a * valoresDePantalla[0] + valoresDePantalla[1] - (hSbarValue / 8f * Screen.width), valoresDePantalla[2], valoresDePantalla[3], valoresDePantalla[3]), img))
+                foreach (Texture2D img in imagenes)
                 {
-                    imagen = img;
-                    imagenAPoner.GetComponent<SpriteRenderer>().sprite = Sprite.Create(imagen, new Rect(new Vector2(0, 0), new Vector2(imagen.width, imagen.height)), new Vector2(0.5f, 0.5f));
-                    imagenAPoner.GetComponent<SpriteRenderer>().size = new Vector2(1, 1);
+                    if (GUI.Button(new Rect(a * valoresDePantalla[0] + valoresDePantalla[1] - (hSbarValue / 8f * Screen.width), valoresDePantalla[2], valoresDePantalla[3], valoresDePantalla[3]), img))
+                    {
+                        imagen = img;
+                        imagenAPoner.GetComponent<SpriteRenderer>().sprite = Sprite.Create(imagen, new Rect(new Vector2(0, 0), new Vector2(imagen.width, imagen.height)), new Vector2(0.5f, 0.5f));
+                        imagenAPoner.GetComponent<SpriteRenderer>().size = new Vector2(1, 1);
+                    }
+                    a++;
                 }
-                a++;
             }
+            else
+            {
+                GUI.Label(new Rect(0, 0, 1.1f * Screen.width, 0.3f * Screen.height),"Actualmente no hay imagenes que se puedan poner.");
+            }
+
         }
     }
 
@@ -178,9 +191,9 @@ public class ConexionAServidor : MonoBehaviour
     /// </summary>
     void ChangeInputMode()
     {
-        #if !UNITY_EDITOR && UNITY_WEBGL
+#if !UNITY_EDITOR && UNITY_WEBGL
             WebGLInput.captureAllKeyboardInput=!WebGLInput.captureAllKeyboardInput;
-        #endif
+#endif
     }
 
     /// <summary>
@@ -217,11 +230,11 @@ public class ConexionAServidor : MonoBehaviour
         });
         stringOfImages = stringOfImages.Remove(stringOfImages.Length - 1, 1) + "]";
         form.AddField("images", stringOfImages);
-        #if !UNITY_EDITOR && UNITY_WEBGL
+#if !UNITY_EDITOR && UNITY_WEBGL
             form.AddField("roomcode",roomid);
-        #elif UNITY_EDITOR
+#elif UNITY_EDITOR
             form.AddField("roomcode", "645c3a1870fb865a1596c843");
-        #endif
+#endif
         form.AddField("BackgroudColor", backgroudColor.color.Replace("}", ""));
         form.AddBinaryData("image", bytes);
         Debug.Log(stringOfImages);
@@ -286,8 +299,17 @@ public class ConexionAServidor : MonoBehaviour
         {
             string[] a = request.downloadHandler.text.Replace("{\"name\":\"", url + "/images/").Replace("\"}", "").Replace("[", "").Replace("]", "").Split(',');
             Debug.Log(request.downloadHandler.text.Replace("{\"name\":\"", url + "/images/").Replace("\"}", "").Replace("[", "").Replace("]", ""));
-            LoadImages(a);
-            StartCoroutine(DownloadDataOfRoom(a.Length));
+
+            if (a[0] != "")
+            {
+                LoadImages(a);
+                StartCoroutine(DownloadDataOfRoom(a.Length));
+            }
+            else
+            {
+                StartCoroutine(DownloadDataOfRoom(0));
+            }
+
         }
     }
 
@@ -297,7 +319,7 @@ public class ConexionAServidor : MonoBehaviour
     /// <param name="Length">La cantidad de imagenes que imagenes que se tienen que cargar.</param>
     IEnumerator DownloadDataOfRoom(int Length)
     {
-        while (Length != imagenes.ToArray().Length)
+        do
         {
             yield return new WaitForSeconds(0.5f);
             if (Length == imagenes.ToArray().Length)
@@ -312,7 +334,6 @@ public class ConexionAServidor : MonoBehaviour
                 {
                     Debug.Log(request.downloadHandler.text);
                     string[] splitString = { "},{" };
-                    char[] splitChar = { '|' };
                     string[] imagesInRoom = request.downloadHandler.text.Split(splitString, System.StringSplitOptions.None);
                     Debug.Log(imagesInRoom.Length);
                     Debug.Log(imagesInRoom[0].Substring(12, 2));
@@ -320,16 +341,7 @@ public class ConexionAServidor : MonoBehaviour
                     {
                         Array.ForEach(imagesInRoom, (element) =>
                         {
-                            string[] elementValues = element.Replace("\",\"", "|").Replace("posX", "").Replace("posY", "").Replace("url", "").Replace("\"", "")
-                                                            .Replace(":", "").Replace("[", "").Replace("{", "").Replace("Imagenes", "").Replace(",", ".").Split(splitChar, System.StringSplitOptions.None);
-                            Debug.Log(elementValues[0] + elementValues[1] + elementValues[2]);
-                            Vector3 pos = new Vector3(float.Parse(elementValues[0], CultureInfo.InvariantCulture.NumberFormat), float.Parse(elementValues[1], CultureInfo.InvariantCulture.NumberFormat), imagenAPoner.transform.position.z);
-                            Texture2D textureOfElement = UrlToTextures.Find(x => x.url.Equals(elementValues[2])).texture;
-                            AddAImage(pos, textureOfElement, elementValues[2]);
-                            if (element == imagesInRoom[imagesInRoom.Length - 1])
-                            {
-                                backgroudColor.ModifyColor("#" + elementValues[3].Split(new char[] { '#' })[1]);
-                            }
+                            StartCoroutine(LoadImagesAndColorOfRoom(element, imagesInRoom));
                         });
                     }
                     else
@@ -340,7 +352,78 @@ public class ConexionAServidor : MonoBehaviour
                 loading.EndLoading();
                 showGUI = true;
             }
+        } while (Length != imagenes.ToArray().Length);
+    }
+
+    IEnumerator LoadImagesAndColorOfRoom(string element, string[] imagesInRoom)
+    {
+        string[] elementValues = element.Replace("\",\"", "|").Replace("posX", "").Replace("posY", "").Replace("url", "").Replace("\"", "")
+                                                            .Replace(":", "").Replace("[", "").Replace("{", "").Replace("Imagenes", "").Replace(",", ".").Split(new char[] { '|' }, System.StringSplitOptions.None);
+        Debug.Log(elementValues[0] + elementValues[1] + elementValues[2]);
+        Vector3 pos = new Vector3(float.Parse(elementValues[0], CultureInfo.InvariantCulture.NumberFormat), float.Parse(elementValues[1], CultureInfo.InvariantCulture.NumberFormat), imagenAPoner.transform.position.z);
+        Debug.Log(UrlToTextures.Find(x => x.url.Equals(elementValues[2])) != null);
+
+        Texture2D textureOfElement;
+        if (UrlToTextures.Find(x => x.url.Equals(elementValues[2])) != null)
+        {
+            textureOfElement = UrlToTextures.Find(x => x.url.Equals(elementValues[2])).texture;
         }
+        else
+        {
+            WaitingForInaccessibleImage = true;
+            StartCoroutine(GetANonaccessImage(elementValues[2]));
+            do
+            {
+                yield return new WaitForSeconds(0.1f);
+            } while (WaitingForInaccessibleImage);
+            //Debug.Log(InaccessibleImages.Find((x)=>x.url.Equals(elementValues[2])).ToString());
+            textureOfElement = new Texture2D(1, 1);
+            int tryGetImage = 0;
+            while (tryGetImage < 3)
+            {
+                try
+                {
+                    textureOfElement = InaccessibleImages.Find((x) => x.url.Equals(elementValues[2])).texture;
+                    tryGetImage = 3;
+                }
+                catch (System.Exception)
+                {
+                    tryGetImage++;
+                }
+                yield return new WaitForSeconds(0.5f);
+            }
+
+
+        }
+        AddAImage(pos, textureOfElement, elementValues[2]);
+        if (element == imagesInRoom[imagesInRoom.Length - 1])
+        {
+            backgroudColor.ModifyColor("#" + elementValues[3].Split(new char[] { '#' })[1]);
+        }
+    }
+
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="imageLocation"></param>
+    /// <returns></returns>
+    IEnumerator GetANonaccessImage(string imageLocation)
+    {
+        Debug.Log(imageLocation);
+        UnityWebRequest requestOfNonaccessImage = UnityWebRequestTexture.GetTexture(url + imageLocation);
+        requestOfNonaccessImage.SetRequestHeader("Access-Control-Expose-Headers", "*");
+        yield return requestOfNonaccessImage.SendWebRequest();
+        if (requestOfNonaccessImage.isNetworkError || requestOfNonaccessImage.isHttpError)
+        {
+            Debug.Log(requestOfNonaccessImage.error);
+        }
+        else
+        {
+            Debug.Log(imageLocation + "" + ((DownloadHandlerTexture)requestOfNonaccessImage.downloadHandler).texture);
+            InaccessibleImages.Add(new UrlToTexture(((DownloadHandlerTexture)requestOfNonaccessImage.downloadHandler).texture, imageLocation));
+
+        }
+        WaitingForInaccessibleImage = false;
     }
 
     /// <summary>
@@ -354,9 +437,9 @@ public class ConexionAServidor : MonoBehaviour
         StartCoroutine(DownloadfromURL(url));
     }
 
-    /// <summary>
+    /// <sumary>
     /// 
-    /// </summary>
+    /// </sumary>
     /// <param name="roomId"></param>
     void setRoomId(string roomId)
     {
