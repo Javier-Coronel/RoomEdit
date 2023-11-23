@@ -221,7 +221,7 @@ router.get('/sortByComments',
               }, (err, comments) => {
                 console.log(comments)
                 if (err) res.status(500).send(err);
-                else res.status(200).json(comments.filter((comment) => valoration.room != null && comment.room.roomAsImage != "" && comment.room.userId))
+                else res.status(200).json(comments.filter((comment) => comment.room != null && comment.room.roomAsImage != "" && comment.room.userId))
               })
             }
           })
