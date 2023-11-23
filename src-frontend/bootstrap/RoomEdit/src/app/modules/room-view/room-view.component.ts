@@ -64,4 +64,5 @@ export class RoomViewComponent {
   reportRoom() {
     this.http.put(environment.BACK_END + "/rooms/reportRoom", { "id": sessionStorage.getItem("roomID")?.toString() }).subscribe()
   }
+
 }
