@@ -13,4 +13,4 @@
     </button>
   </div>
 </div>
-<img id="roomImage" [src]="RoomImage" [alt]="RoomName.length < 40 ? RoomName : RoomName.substring(0,40) + '...'">
+<img id="roomImage" [src]="RoomImage" (error)="RoomImage = 'assets/images/DefaultRoomImage.png'" [alt]="RoomName.length < 40 ? RoomName : RoomName.substring(0,40) + '...'">
