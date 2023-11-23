@@ -1,6 +1,6 @@
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Component } from '@angular/core';
-import { environment } from 'src/environments/environment.development';
+import { environment } from 'src/environments/environment';
 
 @Component({
   selector: 'app-moderator-menu',
@@ -42,8 +42,7 @@ export class ModeratorMenuComponent {
       a => {
         console.log(a);
         this.Rooms = [];
-        let b = JSON.parse(JSON.stringify(a));
-        b.forEach((room: { _id: any, name: string, userId:{name:string}, roomAsImage: string }) => {
+        JSON.parse(JSON.stringify(a)).forEach((room: { _id: any, name: string, userId:{name:string}, roomAsImage: string }) => {
           this.Rooms.push({"_id":room._id,"user":room.userId.name,"name":room.name,"image":(room.roomAsImage) ? (environment.BACK_END + "/rooms/" + room.roomAsImage) : "assets/images/DefaultRoomImage.png"})
         })
       }
@@ -87,8 +86,7 @@ export class ModeratorMenuComponent {
    * @param a 
    */
   commitToUsersArray(a: Object) {
-    let b = JSON.parse(JSON.stringify(a));
-    b.forEach((element: { name: any; banned: boolean; _id: any; }) => {
+    JSON.parse(JSON.stringify(a)).forEach((element: { name: any; banned: boolean; _id: any; }) => {
       this.Users.push({ 'name': element.name, 'banned': element.banned, 'id': element._id });
     });
   }
@@ -181,8 +179,7 @@ export class ModeratorMenuComponent {
 
   pushComments(comments: any) {
     this.Comments = []
-    let b = JSON.parse(JSON.stringify(comments));
-    b.forEach((element: { _id: any, dateOfCreation: string; user: { name: any; }; content: any; }) => {
+    JSON.parse(JSON.stringify(comments)).forEach((element: { _id: any, dateOfCreation: string; user: { name: any; }; content: any; }) => {
       let date: any = element.dateOfCreation.split('-');
       date = date[2].split('T')[0] + '/' + date[1] + '/' + date[0]
       this.Comments.push({ '_id': element._id, 'user': element.user.name, 'dateOfCreation': date, 'content': element.content });

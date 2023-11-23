@@ -161,7 +161,7 @@ public class ConexionAServidor : MonoBehaviour
             }
             else
             {
-                GUI.Label(new Rect(0, 0, 1.1f * Screen.width, 0.3f * Screen.height),"Actualmente no hay imagenes que se puedan poner.");
+                GUI.Label(new Rect(0, 0, 1.1f * Screen.width, 0.3f * Screen.height),"Actualmente no hay imagenes que se puedan poner.", gUISkin.label);
             }
 
         }

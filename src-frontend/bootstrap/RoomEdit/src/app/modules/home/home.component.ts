@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { catchError, map, tap } from 'rxjs/operators';
-import { environment } from 'src/environments/environment.development';
+import { environment } from 'src/environments/environment';
 
 @Component({
   selector: 'app-home',
@@ -21,26 +21,29 @@ export class HomeComponent {
   RoomImage: string = environment.BACK_END + "/rooms/" + (sessionStorage.getItem("roomID") ?? "").toString() + ".png";
   /**El nombre de la sala que esta viendo el usuario si no se esta editando su sala. */
   RoomName: string = sessionStorage.getItem("roomName")!
+  /** */
+  userModel = "";
+  /** */
+  Users: Array<{ name: any, id: any }> = [];
   /**El modelo de comentario que puede hacer un usuario. */
   commentModel = { comment: "" };
   /**Objeto que contiene el nombre y el color de la sala del usuario */
-  UserRoom = {name:"",backgroundColor:"#000000"}
+  UserRoom = { name: "", backgroundColor: "#000000" }
   UnityActive: boolean = false;
-  UserValoration:boolean = sessionStorage.getItem("UserValoration")!==null;
-  RoomLoading:boolean = true
+  UserValoration: boolean = sessionStorage.getItem("UserValoration") !== null;
+  RoomLoading: boolean = true
   constructor(private http: HttpClient) {
 
   }
 
   ngOnInit() {
-    
+    this.getRooms('sortByValorations');
     if (localStorage.getItem("RoomEditUser")) {
       console.log(this.ActualRoom)
       this.getComments();
       this.RegisteredUser = true;
       this.getRoom();
     }
-    this.getRooms();
     console.log(this.Rooms)
   }
 
@@ -50,38 +53,37 @@ export class HomeComponent {
    */
   getRooms(type?: string) {
     this.Rooms = [];
-    let b;
-    if (!type || type == "sortByModificaction") {
-      this.http.get(environment.BACK_END + "/rooms/").subscribe(
-        a => {
-          b = JSON.parse(JSON.stringify(a));
-          b.forEach((element: { roomAsImage: string; name: string; _id: string; userId: { name: string; }; }) => {
-            this.pushRoom(element)
-          });
-        }
-      );
-    }
-    else if (type == "sortByValorations" || type == "sortByComments") {
-      this.http.get(environment.BACK_END + "/rooms/" + type).subscribe(
-        a => {
-          b = JSON.parse(JSON.stringify(a));
-          b.forEach((element: { room: { roomAsImage: string; name: string; _id: string; userId: { name: string; }; } }) => {
-            this.pushRoom(element.room)
-          });
+    this.http.get(environment.BACK_END + "/rooms/" + ((typeof type === "undefined")? "": type)).subscribe(
+      a => {
+        console.log(a)
+        let b = JSON.parse(JSON.stringify(a));
+        b.forEach((element: { roomAsImage: string; name: string; _id: string; userId: { name: string; }; }) => {
+          this.pushRoom(element);
+        });
+        b.forEach((element: { room: { roomAsImage: string; name: string; _id: string; userId: { name: string; }; } })=>{
+          this.pushRoom(element.room);
         })
-    }
+        if (!this.RegisteredUser && !sessionStorage.getItem("roomID")) this.changeToRoomView(this.Rooms[0].id, this.Rooms[0].nameOfRoom);
+      }
+    );
   }
 
   /**
    * 
    */
-  getRoom(){
-    this.http.get(environment.BACK_END + "/rooms/getAllDataByUser/" + localStorage.getItem("RoomEditUser")).subscribe(
-      a=> {
+  getRoom(user?: string) {
+    this.http.get(environment.BACK_END + "/rooms/getAllDataByUser/" + ((!user) ? localStorage.getItem("RoomEditUser") : user)).subscribe(
+      a => {
         let b = JSON.parse(JSON.stringify(a));
-        this.UserRoom.name=b.name
-        this.UserRoom.backgroundColor=b.backgroundColor
-        console.log(this.UserRoom)
+        console.log(b)
+        if (!user) {
+          this.UserRoom.name = b.name
+          this.UserRoom.backgroundColor = b.backgroundColor
+          console.log(this.UserRoom)
+        } else {
+          console.log(user)
+          this.changeToRoomView(b._id, b.name)
+        }
       }
     )
   }
@@ -105,12 +107,11 @@ export class HomeComponent {
     this.http.get(commentsUrl).subscribe(
       a => {
         console.log(a);
-        let b = JSON.parse(JSON.stringify(a));
-        b.forEach((element: { _id:any, dateOfCreation: string; user: { name: any; }; content: any; }) => {
+        JSON.parse(JSON.stringify(a)).forEach((element: { _id: any, dateOfCreation: string; user: { name: any; }; content: any; }) => {
           let date: any = element.dateOfCreation.split('-');
           date = date[2].split('T')[0] + '/' + date[1] + '/' + date[0]
           try {
-            this.Comments.push({ '_id':element._id,'user': element.user.name, 'dateOfCreation': date, 'content': element.content });
+            this.Comments.push({ '_id': element._id, 'user': element.user.name, 'dateOfCreation': date, 'content': element.content });
           } catch (error) { }
           console.log(this.Comments)
         });
@@ -122,26 +123,29 @@ export class HomeComponent {
    * Cambia la sala que se esta viendo.
    * @param id El id de la sala.
    */
-  changeToRoomView(id: string, name:string) {
+  changeToRoomView(id: string, name: string) {
     this.ActualRoom = id;
     sessionStorage.setItem("roomID", id);
-    sessionStorage.setItem("roomName",name);
+    sessionStorage.setItem("roomName", name);
     this.RoomImage = environment.BACK_END + "/rooms/" + id + ".png";
     this.RoomName = name;
-    this.http.get(environment.BACK_END + `/valorations/findValoration/${localStorage.getItem("RoomEditUser")}/${id}`).subscribe(
-      a => {
-        console.log(a)
-        if(a !== null)sessionStorage.setItem("UserValoration","");
-        else sessionStorage.removeItem("UserValoration")
-        this.UserValoration = sessionStorage.getItem("UserValoration")!==null
-        console.log("Prueba 4 " + (sessionStorage.getItem("UserValoration") !== null))
-        console.log(this.UserValoration)
-        
-      }
-    )
-    this.RoomLoading=false;
-    setTimeout(()=>{
-      this.RoomLoading=true
+    if (this.RegisteredUser) {
+      this.http.get(environment.BACK_END + `/valorations/findValoration/${localStorage.getItem("RoomEditUser")}/${id}`).subscribe(
+        a => {
+          console.log(a)
+          if (a !== null) sessionStorage.setItem("UserValoration", "");
+          else sessionStorage.removeItem("UserValoration")
+          this.UserValoration = sessionStorage.getItem("UserValoration") !== null
+          console.log("Prueba 4 " + (sessionStorage.getItem("UserValoration") !== null))
+          console.log(this.UserValoration)
+
+        }
+      )
+    }
+
+    this.RoomLoading = false;
+    setTimeout(() => {
+      this.RoomLoading = true
     })
     this.getComments();
     //window.location.href = window.location.href;
@@ -179,21 +183,32 @@ export class HomeComponent {
       }
     }
   }
-  reportComment(id:any){
-    this.http.put(environment.BACK_END + "/comments/reportComment", {"id":id}).subscribe()
+  onSearch(user: string) {
+    console.log(user)
+    this.Users = [];
+    this.http.get(environment.BACK_END + "/users/searchByName/" + user.toString()).subscribe(
+      a => {
+        JSON.parse(JSON.stringify(a)).forEach((element: { name: any; _id: any; }) => {
+          this.Users.push({ 'name': element.name, 'id': element._id });
+        });
+      }
+    )
   }
-  ActivateUnityOptions(){
-    this.UnityActive=true
+  reportComment(id: any) {
+    this.http.put(environment.BACK_END + "/comments/reportComment", { "id": id }).subscribe()
   }
-  changeRoomName(e:any){
-    this.http.get(environment.BACK_END + "/rooms/searchByUser/" + localStorage.getItem("RoomEditUser")).subscribe(a=>{
+  ActivateUnityOptions() {
+    this.UnityActive = true
+  }
+  changeRoomName(e: any) {
+    this.http.get(environment.BACK_END + "/rooms/searchByUser/" + localStorage.getItem("RoomEditUser")).subscribe(a => {
       console.log(a)
-      this.http.put(environment.BACK_END + "/rooms/renameRoom", {id:a, name:e.target.value}).subscribe()
+      this.http.put(environment.BACK_END + "/rooms/renameRoom", { id: a, name: e.target.value }).subscribe()
     })
   }
-  setBackgroundColor(e:any){
+  setBackgroundColor(e: any) {
     console.log(e.target.value)
-      document.querySelector("iframe")?.contentWindow?.postMessage(e.target.value,"*");
+    document.querySelector("iframe")?.contentWindow?.postMessage(e.target.value, "*");
   }
 }
 

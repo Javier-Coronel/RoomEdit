@@ -1,3 +1,5 @@
 export const environment = {
-    BACK_END: 'https://roomedit-production.up.railway.app'
+    production: false,
+    BACK_END: 'https://roomedit-production.up.railway.app',
+    rute: '/RoomEdit'
 };

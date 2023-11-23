@@ -79,14 +79,51 @@ router.post('/',
 /**
  * Obtiene todas imagenes ordenadas por su nombre.
  */
-router.get('/names', function (req, res, next) {
-    Image.find({}).sort('name').select({'name':1,'_id':0}).exec(function(err, images){
+router.get('/', function (req, res, next) {
+    Image.find().sort('name').exec(function(err, images){
         if(err) res.status(500).send(err);
         else{ 
-
             res.status(200).json(images)
         }
     })
 })
+
+/**
+ * Obtiene los nombres de las imagenes accesibles ordenadas por su nombre.
+ */
+router.get('/names', function (req, res, next) {
+    Image.find({access:true}).sort('name').select({'name':1,'_id':0}).exec(function(err, images){
+        if(err) res.status(500).send(err);
+        else{ 
+            res.status(200).json(images)
+        }
+    })
+})
+
+/**
+ * Actualiza el estado de acceso a una imagen.
+ */
+router.put("/changeAccess",
+    body("id")
+    .exists()
+    .isString(),
+    body("access")
+    .exists()
+    .isBoolean(),
+    function (req, res, next) {
+        const errors = validationResult(req);
+        if (!errors.isEmpty()) {
+          return res.status(400).json({
+            errors: errors.array()
+          })
+        }
+        Image.findByIdAndUpdate(req.body.id, {
+            access: req.body.access
+          }, function (err, image) {
+            if (err) res.status(500).send(err);
+            else res.status(200).json(image);
+        });
+    }
+)
 
 module.exports = router;

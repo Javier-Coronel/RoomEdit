@@ -30,20 +30,27 @@ router.post('/',
         errors: errors.array()
       })
     }
-
-    User.create({
-      name: req.body.name,
-      code: req.body.name,
-      password: req.body.password
-    }).then(user => {
-      Room.create({
-        userId: user._id,
-        name:"",
-        images:[],
-        roomAsImage:""
-      }).then()
-      res.json(user)
-    });
+    User.findOne({name:req.body.name}).then(user=>{
+      if(user){
+        res.status(400).json("Duplicated user")
+      }
+      else{
+        User.create({
+          name: req.body.name,
+          code: req.body.name,
+          password: req.body.password
+        }).then(user => {
+          Room.create({
+            userId: user._id,
+            name:"",
+            images:[],
+            roomAsImage:""
+          }).then()
+          res.json(user)
+        });
+      }
+    })
+    
   }
 );
 

@@ -6,5 +6,11 @@
 </div>
 <button (click)="upload()">Upload</button>
 <div class="d-flex justify-content-between uploaded-images" >
-<img class="p-2" *ngFor="let image of images" src="{{image}}">
+  <div *ngFor="let image of images">
+    <mat-slide-toggle [checked]="image.access" (change)="updateImage(!$event.checked, image.id)"
+      class="datachanger">
+    </mat-slide-toggle>
+    <img class="p-2" src="{{image.name}}">
+  </div>
+
 </div>

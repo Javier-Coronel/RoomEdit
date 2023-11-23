@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 import { UserInRegistration } from './registration.model';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
-import { environment } from 'src/environments/environment.development';
+import { environment } from 'src/environments/environment';
 
 @Component({
   selector: 'app-registration',
@@ -12,10 +12,10 @@ export class RegistrationComponent {
   constructor(private http: HttpClient){
 
   }
-  model = new UserInRegistration(1,"","","","");
+  model = new UserInRegistration(1,"","","");
   submitted = false;
   rute=environment.rute
-  onSubmit(user:{name:string,email:string,password:string,confirmPassword:string}){
+  onSubmit(user:{name:string,password:string,confirmPassword:string}){
     this.submitted=true;
     const headers = new HttpHeaders({
       'Content-Type':'application/json',

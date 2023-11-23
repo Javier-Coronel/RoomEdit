@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
-import { environment } from 'src/environments/environment.development';
+import { environment } from 'src/environments/environment';
 @Component({
   selector: 'app-change-password',
   templateUrl: './change-password.component.html',

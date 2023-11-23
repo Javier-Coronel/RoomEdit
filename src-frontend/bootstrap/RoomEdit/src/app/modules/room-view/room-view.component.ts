@@ -1,6 +1,6 @@
 import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
 import { Component, Input } from '@angular/core';
-import { environment } from 'src/environments/environment.development';
+import { environment } from 'src/environments/environment';
 
 @Component({
   selector: 'app-room-view',
@@ -20,9 +20,6 @@ export class RoomViewComponent {
     if (localStorage.getItem("RoomEditUser")) {
       this.RegisteredUser = true
     }
-    console.log("Prueba 1 " + (sessionStorage.getItem("UserValoration") !== null))
-    console.log(this.UserValoration)
-    
   }
 
   ValorationOfRoom() {

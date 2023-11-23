@@ -1,6 +1,6 @@
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Component } from '@angular/core';
-import { environment } from 'src/environments/environment.development';
+import { environment } from 'src/environments/environment';
 
 @Component({
   selector: 'app-navigation',
@@ -32,7 +32,7 @@ export class NavigationComponent {
         if (this.LoggedUser != null) {
           setTimeout(() => {
             let links = document.getElementById("logged")?.getElementsByClassName(this.classToSearch) ?? [];
-            if (window.location.pathname == "/") {
+            if (window.location.pathname == this.rute + "/") {
               links[0].setAttribute("class", "mdc-button mdc-button--outlined mat-mdc-outlined-button mat-unthemed mat-mdc-button-base");
             } else {
               this.searchActualLocation(links);
@@ -46,7 +46,7 @@ export class NavigationComponent {
     let a = links?.length
     for (let index = 0; index < (a ?? 0); index++) {
       const element = links[index];
-      if (element.getAttribute("[href]") == window.location.pathname + this.rute) {
+      if (element.getAttribute("href") == window.location.pathname) {
         element.setAttribute("class", "mdc-button mdc-button--outlined mat-mdc-outlined-button mat-unthemed mat-mdc-button-base")
         break;
       }

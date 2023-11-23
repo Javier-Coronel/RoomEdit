@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 import { User } from './login.model';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
-import { environment } from 'src/environments/environment.development';
+import { environment } from 'src/environments/environment';
 
 @Component({
   selector: 'app-login',

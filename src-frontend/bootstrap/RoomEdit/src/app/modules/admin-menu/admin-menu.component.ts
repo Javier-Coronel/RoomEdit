@@ -1,7 +1,7 @@
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { verifyHostBindings } from '@angular/compiler';
 import { Component } from '@angular/core';
-import { environment } from 'src/environments/environment.development';
+import { environment } from 'src/environments/environment';
 
 
 @Component({
@@ -13,15 +13,18 @@ export class AdminMenuComponent {
   constructor(private http: HttpClient) {
 
   }
+  /** */
   userModel = { user: "" };
+  /** */
   Users: Array<{ name: any, type: any, id: any }> = [];
+  /** */
   userTypes = ["User", "Mod", "Admin"];
 
   ngOnInit() {
     this.searchAllUsers();
     document.getElementById("verificationOfChanges")!.style.zIndex="-1"
   }
-  // Esta funcion buscara todos los usuarios de la base de datos
+  /**Esta funcion buscara todos los usuarios de la base de datos. */
   searchAllUsers() {
     this.http.get(environment.BACK_END + "/users/").subscribe(
       a => {
@@ -29,7 +32,7 @@ export class AdminMenuComponent {
       }
     )
   }
-  // Esta funcion buscara uno o varios usuarios
+  /**Esta funcion buscara uno o varios usuarios. */
   onSearch(user: { user: string } | any) {
     this.Users = [];
     if (typeof (user) === typeof (this.userModel) && user.user != "") {
@@ -44,15 +47,23 @@ export class AdminMenuComponent {
       this.searchAllUsers();
     }
   }
+  /**
+   * 
+   * @param a 
+   */
   commitToUsersArray(a: Object) {
     console.log(a);
-    let b = JSON.parse(JSON.stringify(a));
-    b.forEach((element: { name: any; type: any; _id: any; }) => {
+    JSON.parse(JSON.stringify(a)).forEach((element: { name: any; type: any; _id: any; }) => {
       this.Users.push({ 'name': element.name, 'type': element.type, 'id': element._id });
       console.log(this.Users);
     });
   }
-  // Esta funcion actualizara el tipo de usuario que es un usuario
+  /**
+   * Esta funcion actualizara el tipo de usuario que es un usuario.
+   * @param user 
+   * @param type 
+   * @param id 
+   */
   updateUser(user: string, type: any, id: string) {
 
     console.log(user, type.value, id);
