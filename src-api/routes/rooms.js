@@ -162,7 +162,7 @@ router.get('/sortByValorations',
               }, (err, valorations) => {
                 console.log(valorations)
                 if (err) res.status(500).send(err);
-                else res.status(200).json(valorations.filter((valoration) => valoration.room.roomAsImage != "" && valoration.room.userId))
+                else res.status(200).json(valorations.filter((valoration) => valoration.room != null && valoration.room.roomAsImage != "" && valoration.room.userId))
               })
             }
           })
@@ -221,7 +221,7 @@ router.get('/sortByComments',
               }, (err, comments) => {
                 console.log(comments)
                 if (err) res.status(500).send(err);
-                else res.status(200).json(comments.filter((comment) => comment.room.roomAsImage != "" && comment.room.userId))
+                else res.status(200).json(comments.filter((comment) => valoration.room != null && comment.room.roomAsImage != "" && comment.room.userId))
               })
             }
           })
