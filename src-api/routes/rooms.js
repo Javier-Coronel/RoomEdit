@@ -160,6 +160,7 @@ router.get('/sortByValorations',
                   banned: false
                 }
               }, (err, valorations) => {
+                console.log(valorations)
                 if (err) res.status(500).send(err);
                 else res.status(200).json(valorations.filter((valoration) => valoration.room.roomAsImage != "" && valoration.room.userId))
               })
@@ -218,6 +219,7 @@ router.get('/sortByComments',
                   banned: false
                 }
               }, (err, comments) => {
+                console.log(comments)
                 if (err) res.status(500).send(err);
                 else res.status(200).json(comments.filter((comment) => comment.room.roomAsImage != "" && comment.room.userId))
               })
