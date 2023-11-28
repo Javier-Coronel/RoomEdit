@@ -82,7 +82,7 @@ export class HomeComponent {
           console.log(this.UserRoom)
         } else {
           console.log(user)
-          this.changeToRoomView(b._id, b.name)
+          this.changeToRoomView(b._id, (b.name) ? b.name : "Sala de " + user)
         }
       }
     )
