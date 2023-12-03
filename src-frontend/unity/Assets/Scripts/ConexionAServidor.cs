@@ -71,6 +71,8 @@ public class ConexionAServidor : MonoBehaviour
     [Tooltip("La imagen inaccesible")]
     public List<UrlToTexture> InaccessibleImages;
 
+    private int NumberOfImagesToDownload = 0;
+
     private bool WaitingForInaccessibleImage = true;
     /// <summary>
     /// Metodo para comprobar que la parte de unity se ha iniciado para pedir datos a la pagina web.
@@ -319,6 +321,7 @@ public class ConexionAServidor : MonoBehaviour
     /// <param name="Length">La cantidad de imagenes que imagenes que se tienen que cargar.</param>
     IEnumerator DownloadDataOfRoom(int Length)
     {
+        
         do
         {
             yield return new WaitForSeconds(0.5f);
@@ -329,6 +332,7 @@ public class ConexionAServidor : MonoBehaviour
                 if (request.isNetworkError || request.isHttpError)
                 {
                     Debug.Log(request.error);
+                    NumberOfImagesToDownload=0;
                 }
                 else
                 {
@@ -337,8 +341,10 @@ public class ConexionAServidor : MonoBehaviour
                     string[] imagesInRoom = request.downloadHandler.text.Split(splitString, System.StringSplitOptions.None);
                     Debug.Log(imagesInRoom.Length);
                     Debug.Log(imagesInRoom[0].Substring(12, 2));
+
                     if (imagesInRoom.Length != 1 || imagesInRoom[0].Substring(12, 2) != "[]")
                     {
+                        NumberOfImagesToDownload = imagesInRoom.Length;
                         Array.ForEach(imagesInRoom, (element) =>
                         {
                             StartCoroutine(LoadImagesAndColorOfRoom(element, imagesInRoom));
@@ -346,13 +352,20 @@ public class ConexionAServidor : MonoBehaviour
                     }
                     else
                     {
+                        NumberOfImagesToDownload = 0;
                         backgroudColor.ModifyColor("#" + imagesInRoom[0].Replace(@"""}", "").Split(new char[] { '#' })[1]);
                     }
                 }
-                loading.EndLoading();
-                showGUI = true;
+                
             }
         } while (Length != imagenes.ToArray().Length);
+
+        while (NumberOfImagesToDownload!=0)
+        {
+            yield return new WaitForSeconds(0.5f);
+        }
+        showGUI = true;
+        loading.EndLoading();
     }
 
     IEnumerator LoadImagesAndColorOfRoom(string element, string[] imagesInRoom)
@@ -374,7 +387,7 @@ public class ConexionAServidor : MonoBehaviour
             StartCoroutine(GetANonaccessImage(elementValues[2]));
             do
             {
-                yield return new WaitForSeconds(0.1f);
+                yield return new WaitForSeconds(1f);
             } while (WaitingForInaccessibleImage);
             //Debug.Log(InaccessibleImages.Find((x)=>x.url.Equals(elementValues[2])).ToString());
             textureOfElement = new Texture2D(1, 1);
@@ -400,6 +413,7 @@ public class ConexionAServidor : MonoBehaviour
         {
             backgroudColor.ModifyColor("#" + elementValues[3].Split(new char[] { '#' })[1]);
         }
+        NumberOfImagesToDownload--;
     }
 
     /// <summary>
