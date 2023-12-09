@@ -17,7 +17,7 @@
       <button (click)="searchReportedComments()" type="submit" mat-button>Comentarios reportados</button>
     </div>
     <div *ngFor="let User of Users" class="User">
-      <mat-slide-toggle [checked]="User.banned" (change)="updateUser(User.name, $event.checked, User.id)"
+      <mat-slide-toggle [checked]="User.banned" (change)="updateUser($event.checked, User.id)"
         class="datachanger">
       </mat-slide-toggle>
       <button (click)="dataFromUser(User.id, User.name)" type="submit" mat-button>{{User.name}}</button>
@@ -25,6 +25,7 @@
   </div>
   <div class="infoOfUsers">
     <h1 *ngIf="UserInViewId == '' && Rooms.length != 0">Salas reportadas</h1>
+    <h2 *ngIf="UserInViewId != '' && Rooms.length == 0">El usuario no tiene una sala</h2>
     <div class="Room" *ngFor="let Room of Rooms">
       <h2>
         Sala de {{Room.user}}: {{Room.name}}

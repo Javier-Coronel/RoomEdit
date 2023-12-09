@@ -19,12 +19,14 @@ export class UnityComponent implements OnInit {
     this.http.get(environment.BACK_END+"/rooms/searchByUser/"+localStorage.getItem("RoomEditUser")).subscribe(
       a=> {
         console.log(a)
-        let b = ()=>this.onUnityLoaded.emit();
+        let b = ()=>{
+          console.log("unity loaded")
+          this.onUnityLoaded.emit();}
         window.onmessage = function(e:any) {
           if(e.data == "getUrl"){
             document.querySelector("iframe")?.contentWindow?.postMessage(environment.BACK_END+"|"+a,"*");
+            b()
           }
-          b()
         }
       }
     );

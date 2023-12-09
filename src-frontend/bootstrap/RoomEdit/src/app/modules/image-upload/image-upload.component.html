@@ -5,12 +5,12 @@
   <p>(Deben tener el formato PNG o JPG)</p>
 </div>
 <button (click)="upload()">Upload</button>
-<div class="d-flex justify-content-between uploaded-images" >
+<div class="d-flex flex-wrap justify-content-start uploaded-images" >
   <div *ngFor="let image of images">
     <mat-slide-toggle [checked]="image.access" (change)="updateImage(!$event.checked, image.id)"
       class="datachanger">
     </mat-slide-toggle>
-    <img class="p-2" src="{{image.name}}">
+    <img class="p-2" src="{{image.url}}" [alt]="image.name.replace('.png', '')">
   </div>
 
 </div>

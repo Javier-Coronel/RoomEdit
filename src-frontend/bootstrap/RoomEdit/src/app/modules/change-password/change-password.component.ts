@@ -11,9 +11,7 @@ export class ChangePasswordComponent {
 
   }
   model = { id: "", password: "", confirmPassword: "" };
-
   submitted = false;
-
   rute=environment.rute;
 
   onSubmit(user: { password: string, confirmPassword: string }) {

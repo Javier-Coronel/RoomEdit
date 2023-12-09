@@ -66,12 +66,7 @@ router.post('/',
                     adminOfUpload:userCode
                 })
             }
-            
         });
-
-        // Everything went fine.
-        // show file `req.files`
-        // show body `req.body`
         res.status(200).end('Your files uploaded.');
     })
 });

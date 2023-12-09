@@ -8,8 +8,8 @@ services:
       - PORT=5000
       - DB_URI=${DB_URI}
     volumes:
-      - roomeditimages:/public/images
-      - roomeditrooms:/public/rooms
+      - roomeditimages:/app/public/images
+      - roomeditrooms:/app/public/rooms
   frontend:
     build: ../src-frontend/bootstrap/RoomEdit
     ports:

@@ -24,6 +24,10 @@ export class NavigationComponent {
       })
     }
   }
+
+  /**
+   * Comprueba si el usuario esta loggeado.
+   */
   getLoggedUser() {
     this.http.get(environment.BACK_END + "/users/searchByCode/" + localStorage.getItem("RoomEditUser")).subscribe(
       a => {
@@ -42,6 +46,11 @@ export class NavigationComponent {
       }
     )
   }
+
+  /**
+   * Busca en que pagina esta el usuario para cambiar el boton seleccionado.
+   * @param links 
+   */
   searchActualLocation(links: any) {
     let a = links?.length
     for (let index = 0; index < (a ?? 0); index++) {
@@ -52,10 +61,18 @@ export class NavigationComponent {
       }
     }
   }
+
+  /**
+   * Cierra la sesion del usuario.
+   */
   logout() {
     localStorage.clear();
     window.location.href = 'http://' + window.location.host + this.rute;
   }
+
+  /**
+   * Accede a la pagina principal.
+   */
   openRoom() {
     if (window.location.pathname == '/' && sessionStorage.getItem("roomID")) {
       sessionStorage.removeItem("roomID");

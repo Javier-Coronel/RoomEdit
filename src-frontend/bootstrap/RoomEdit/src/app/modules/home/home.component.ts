@@ -21,16 +21,18 @@ export class HomeComponent {
   RoomImage: string = environment.BACK_END + "/rooms/" + (sessionStorage.getItem("roomID") ?? "").toString() + ".png";
   /**El nombre de la sala que esta viendo el usuario si no se esta editando su sala. */
   RoomName: string = sessionStorage.getItem("roomName")!
-  /** */
   userModel = "";
-  /** */
+  /**Array con todos los usuarios que se estan mostrando en la pagina. */
   Users: Array<{ name: any, id: any }> = [];
   /**El modelo de comentario que puede hacer un usuario. */
   commentModel = { comment: "" };
   /**Objeto que contiene el nombre y el color de la sala del usuario */
   UserRoom = { name: "", backgroundColor: "#000000" }
+  /**Comprueba si la parte de unity */
   UnityActive: boolean = false;
+  /**La valoracion que le ha dado el usuario registrado a una sala. */
   UserValoration: boolean = sessionStorage.getItem("UserValoration") !== null;
+  /**Detecta el cambio entre dos salas. */
   RoomLoading: boolean = true
   constructor(private http: HttpClient) {
 
@@ -69,7 +71,8 @@ export class HomeComponent {
   }
 
   /**
-   * 
+   * Obtiene la sala de un usuario.
+   * @param user El nombre del usuario del que se obtiene la sala, si no se da la sala se obtendra del usuario registrado.
    */
   getRoom(user?: string) {
     this.http.get(environment.BACK_END + "/rooms/getAllDataByUser/" + ((!user) ? localStorage.getItem("RoomEditUser") : user)).subscribe(
@@ -148,7 +151,6 @@ export class HomeComponent {
       this.RoomLoading = true
     })
     this.getComments();
-    //window.location.href = window.location.href;
   }
 
   /**
@@ -183,6 +185,10 @@ export class HomeComponent {
       }
     }
   }
+  
+  /**
+   * Esta funcion buscara uno o varios usuarios. 
+   */
   onSearch(user: string) {
     console.log(user)
     this.Users = [];
@@ -194,18 +200,37 @@ export class HomeComponent {
       }
     )
   }
+
+  /**
+   * Reporta un comentario.
+   * @param id El id del comentario.
+   */
   reportComment(id: any) {
     this.http.put(environment.BACK_END + "/comments/reportComment", { "id": id }).subscribe()
   }
+
+  /**
+   * Actualiza la variable 
+   */
   ActivateUnityOptions() {
     this.UnityActive = true
   }
+
+  /**
+   * Cambia el nombre de la sala.
+   * @param e El evento que contiene el nuevo nombre a poner.
+   */
   changeRoomName(e: any) {
     this.http.get(environment.BACK_END + "/rooms/searchByUser/" + localStorage.getItem("RoomEditUser")).subscribe(a => {
       console.log(a)
       this.http.put(environment.BACK_END + "/rooms/renameRoom", { id: a, name: e.target.value }).subscribe()
     })
   }
+
+  /**
+   * Cambia el color de la sala.
+   * @param e El evento que contiene el codigo hexadecimal del color a poner.
+   */
   setBackgroundColor(e: any) {
     console.log(e.target.value)
     document.querySelector("iframe")?.contentWindow?.postMessage(e.target.value, "*");

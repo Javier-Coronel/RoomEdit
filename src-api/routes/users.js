@@ -159,7 +159,6 @@ router.put('/changePassword',
         user.comparePassword(req.body.actualPassword, function (err, isMatch) {
           if (err) return next(err);
           if (isMatch){
-            console.log("asd")
             User.findOneAndUpdate({
               code: req.body.code
             }, {

@@ -8,14 +8,10 @@ import { environment } from 'src/environments/environment';
   styleUrls: ['./image-upload.component.scss']
 })
 export class ImageUploadComponent {
-  /**
-   * 
-   */
+  /**La informacion que se va a mandar al backend (el nombre del usuario y las imagenes que manda). */
   fd = new FormData();
-  /**
-   * 
-   */
-  images: Array<{ name: any, access: boolean, id: any }> = []
+  /**Las imagenes que estan en el servidor. */
+  images: Array<{ name: any, access: boolean, id: any, url:string }> = []
   
   constructor(private http: HttpClient) {}
   ngOnInit(){
@@ -23,21 +19,20 @@ export class ImageUploadComponent {
     this.http.get(environment.BACK_END+"/images/").subscribe(a=>{
       console.log(a)
       JSON.parse(JSON.stringify(a)).forEach((element:{name:string,access:boolean,_id:any}) => {
-        this.images.push({name:environment.BACK_END+"/images/"+element.name,access:!element.access,id:element._id});
+        this.images.push({name:element.name,access:!element.access,id:element._id, url:environment.BACK_END+"/images/"+element.name});
       });
     })
   }
 
   /**
-   * 
+   * Añade las imagenes a la informacion que se va a mandar.
    * @param event 
    */
   createFormData(event:any) {
-    let i = 0
-    while (i < event.target.files.length){
+    
+    for (let i = 0; i < event.target.files.length; i++) {
       this.fd.append('files', <File>event.target.files.item(i))
       console.log(<File>event.target.files[i])
-      i++
     }
     console.log(event.target.files)
     console.log(this.fd)
@@ -45,7 +40,7 @@ export class ImageUploadComponent {
   }
 
   /**
-   * 
+   * Envia la imagenes al backend para ser guardadas y añadidas a la base de datos.
    */
   upload() {
     this.http.post(environment.BACK_END + "/images", this.fd)
@@ -55,7 +50,7 @@ export class ImageUploadComponent {
   }
 
   /**
-   * 
+   * Cambia el acceso a una imagen.
    */
   updateImage(access:boolean, id:any){
     console.log(access + " " + id)

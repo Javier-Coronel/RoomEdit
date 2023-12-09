@@ -13,11 +13,11 @@ export class AdminMenuComponent {
   constructor(private http: HttpClient) {
 
   }
-  /** */
+  /**Modelo del usuario a buscar. */
   userModel = { user: "" };
-  /** */
+  /**Array con todos los usuarios que se estan mostrando en la pagina. */
   Users: Array<{ name: any, type: any, id: any }> = [];
-  /** */
+  /**Los tipos de usuarios que existen. */
   userTypes = ["User", "Mod", "Admin"];
 
   ngOnInit() {
@@ -32,7 +32,9 @@ export class AdminMenuComponent {
       }
     )
   }
-  /**Esta funcion buscara uno o varios usuarios. */
+  /**
+   * Esta funcion buscara uno o varios usuarios. 
+   */
   onSearch(user: { user: string } | any) {
     this.Users = [];
     if (typeof (user) === typeof (this.userModel) && user.user != "") {
@@ -48,8 +50,8 @@ export class AdminMenuComponent {
     }
   }
   /**
-   * 
-   * @param a 
+   * Añade un usuario a los usuarios mostrados en la pagina.
+   * @param a El usuario a añadir.
    */
   commitToUsersArray(a: Object) {
     console.log(a);
@@ -60,9 +62,9 @@ export class AdminMenuComponent {
   }
   /**
    * Esta funcion actualizara el tipo de usuario que es un usuario.
-   * @param user 
-   * @param type 
-   * @param id 
+   * @param user El nombre del usuario a modificar.
+   * @param type El nuevo tipo de usuario.
+   * @param id El id del usuario a modificar.
    */
   updateUser(user: string, type: any, id: string) {
 

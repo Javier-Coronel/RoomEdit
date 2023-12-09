@@ -398,9 +398,8 @@ router.delete('/',
   .exists()
   .isObject(),
   async (req, res) => {
-    Room.findOneAndUpdate({
-      'id': req.params.id
-    }, {
+    let id = req.body.id
+    Room.findByIdAndUpdate(id, {
       backgroundColor: "#000000",
       images: [],
       roomAsImage: "",
@@ -412,10 +411,10 @@ router.delete('/',
     }, async function (err, roominfo) {
       if (err) res.status(500).send(err);
       else {
-        console.log(roominfo.roomAsImage)
+        console.log("Deleting file: "+id)
         try {
-          await fs.unlink("./public/rooms/" + roominfo.roomAsImage, (err) => {
-            if (err) throw err;
+          await fs.unlink("./public/rooms/" + id + ".png", (err) => {
+            if (err) console.log(err);
           })
         } catch (error) {
           console.log(error.message)

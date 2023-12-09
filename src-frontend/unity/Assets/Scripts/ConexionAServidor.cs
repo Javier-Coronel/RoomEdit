@@ -67,12 +67,18 @@ public class ConexionAServidor : MonoBehaviour
     /// Si esta activo enseña la GUI.
     /// </summary>
     private bool showGUI = false;
-
-    [Tooltip("La imagen inaccesible")]
+    /// <summary>
+    /// La lista de imagenes que son consideradas innaccesibles pero que el usuario a puesto antes de ser innaccesibles.
+    /// </summary>
+    [Tooltip("Las imagenes inaccesibles")]
     public List<UrlToTexture> InaccessibleImages;
-
+    /// <summary>
+    /// El numero de imagenes que faltan por descargar.
+    /// </summary>
     private int NumberOfImagesToDownload = 0;
-
+    /// <summary>
+    /// Detecta cuando se esta esperando la descarga de una imagen que es innacesible.
+    /// </summary>
     private bool WaitingForInaccessibleImage = true;
     /// <summary>
     /// Metodo para comprobar que la parte de unity se ha iniciado para pedir datos a la pagina web.
@@ -84,14 +90,12 @@ public class ConexionAServidor : MonoBehaviour
     void Start()
     {
         ChangeInputMode();
-#if !UNITY_EDITOR && UNITY_WEBGL
+        #if !UNITY_EDITOR && UNITY_WEBGL
             UnityIsReady();
-#elif UNITY_EDITOR
+        #elif UNITY_EDITOR
             CheckUrl("http://localhost:5000");
             roomid = "645c3a1870fb865a1596c843";
-#endif
-
-        //print(Screen.width + " | " + Screen.height);
+        #endif
         imagenAPoner = new GameObject("imagenAPoner", typeof(SpriteRenderer));
         imagenAPoner.GetComponent<SpriteRenderer>().sortingOrder = 32767;
     }
@@ -138,7 +142,7 @@ public class ConexionAServidor : MonoBehaviour
         gameObject.GetComponent<SpriteRenderer>().sortingOrder = -32767 + orderOfImages++;
     }
 
-    // OnGUI es llamado varias veces por frame y sirve para renderizar y manejar los eventos de la interfaz
+    // OnGUI es llamado varias veces por frame y sirve para renderizar y manejar los eventos de la interfaz.
     private void OnGUI()
     {
         if (showGUI)
@@ -178,14 +182,7 @@ public class ConexionAServidor : MonoBehaviour
         foreach (string url in cadenaDeURLS)
         {
             StartCoroutine(LoadImageFromURL(url));
-
-
-            /*GameObject gameObject = new GameObject("ImageUI",typeof(Button),typeof(Image));
-            gameObject.GetComponent<Button>().clicked+=()=>{imagen = imagenes[imagenes.Count];};
-            gameObject.GetComponent<Image>().image=imagenes[imagenes.Count];
-            gameObject.transform.position = new Vector2(gameObject.transform.position.x,imagenes.Count);*/
         }
-
     }
 
     /// <summary>
@@ -193,24 +190,21 @@ public class ConexionAServidor : MonoBehaviour
     /// </summary>
     void ChangeInputMode()
     {
-#if !UNITY_EDITOR && UNITY_WEBGL
+        #if !UNITY_EDITOR && UNITY_WEBGL
             WebGLInput.captureAllKeyboardInput=!WebGLInput.captureAllKeyboardInput;
-#endif
+        #endif
     }
 
     /// <summary>
-    /// 
+    /// Llama a la corutina que guarda la sala en la base de datos.
     /// </summary>
     private void SaveRoom()
     {
-
         StartCoroutine(UploadRoom());
-
-        Debug.Log(Application.persistentDataPath);
     }
 
     /// <summary>
-    /// 
+    /// Guarda la sala en la base de datos y hace una imagen de la salapara guararla en la parte del servidor.
     /// </summary>
     IEnumerator UploadRoom()
     {
@@ -232,11 +226,11 @@ public class ConexionAServidor : MonoBehaviour
         });
         stringOfImages = stringOfImages.Remove(stringOfImages.Length - 1, 1) + "]";
         form.AddField("images", stringOfImages);
-#if !UNITY_EDITOR && UNITY_WEBGL
+        #if !UNITY_EDITOR && UNITY_WEBGL
             form.AddField("roomcode",roomid);
-#elif UNITY_EDITOR
+        #elif UNITY_EDITOR
             form.AddField("roomcode", "645c3a1870fb865a1596c843");
-#endif
+        #endif
         form.AddField("BackgroudColor", backgroudColor.color.Replace("}", ""));
         form.AddBinaryData("image", bytes);
         Debug.Log(stringOfImages);
@@ -270,13 +264,16 @@ public class ConexionAServidor : MonoBehaviour
         else
         {
             imagenes.Add(((DownloadHandlerTexture)request.downloadHandler).texture);
-            //Cursor.SetCursor(imagen, new Vector2(imagen.height/2,imagen.width/2), CursorMode.ForceSoftware);
             UrlToTextures.Add(new UrlToTexture(((DownloadHandlerTexture)request.downloadHandler).texture, url.Remove(0, this.url.Length)));
             Debug.Log(url);
 
         }
     }
 
+    /// <summary>
+    /// Elimina una imagen de la sala, esto incluye al objeto en la escena, y guarda la sala.
+    /// </summary>
+    /// <param name="obj">El objeto que contiene la imagen.</param>
     public void DeleteImageFromRoom(GameObject obj)
     {
         DeleteImage deleteImage = obj.GetComponent<DeleteImage>();
@@ -286,9 +283,9 @@ public class ConexionAServidor : MonoBehaviour
     }
 
     /// <summary>
-    /// 
+    /// Obtiene todas las imagenes accesibles.
     /// </summary>
-    /// <param name="url"></param>
+    /// <param name="url">La url donde esta localizado el backend de la aplicación.</param>
     IEnumerator DownloadfromURL(string url)
     {
         UnityWebRequest request = UnityWebRequest.Get(url + "/images/names");
@@ -321,7 +318,6 @@ public class ConexionAServidor : MonoBehaviour
     /// <param name="Length">La cantidad de imagenes que imagenes que se tienen que cargar.</param>
     IEnumerator DownloadDataOfRoom(int Length)
     {
-        
         do
         {
             yield return new WaitForSeconds(0.5f);
@@ -341,7 +337,6 @@ public class ConexionAServidor : MonoBehaviour
                     string[] imagesInRoom = request.downloadHandler.text.Split(splitString, System.StringSplitOptions.None);
                     Debug.Log(imagesInRoom.Length);
                     Debug.Log(imagesInRoom[0].Substring(12, 2));
-
                     if (imagesInRoom.Length != 1 || imagesInRoom[0].Substring(12, 2) != "[]")
                     {
                         NumberOfImagesToDownload = imagesInRoom.Length;
@@ -368,6 +363,11 @@ public class ConexionAServidor : MonoBehaviour
         loading.EndLoading();
     }
 
+    /// <summary>
+    /// Carga las imagenes y el color de la sala en la escena.
+    /// </summary>
+    /// <param name="element">La imagen, o el color, que se va a poner en la escena.</param>
+    /// <param name="imagesInRoom">El array con las imagenes, y sus posiciones, y el color de la sala.</param>
     IEnumerator LoadImagesAndColorOfRoom(string element, string[] imagesInRoom)
     {
         string[] elementValues = element.Replace("\",\"", "|").Replace("posX", "").Replace("posY", "").Replace("url", "").Replace("\"", "")
@@ -389,7 +389,6 @@ public class ConexionAServidor : MonoBehaviour
             {
                 yield return new WaitForSeconds(1f);
             } while (WaitingForInaccessibleImage);
-            //Debug.Log(InaccessibleImages.Find((x)=>x.url.Equals(elementValues[2])).ToString());
             textureOfElement = new Texture2D(1, 1);
             int tryGetImage = 0;
             while (tryGetImage < 3)
@@ -405,8 +404,6 @@ public class ConexionAServidor : MonoBehaviour
                 }
                 yield return new WaitForSeconds(0.5f);
             }
-
-
         }
         AddAImage(pos, textureOfElement, elementValues[2]);
         if (element == imagesInRoom[imagesInRoom.Length - 1])
@@ -417,9 +414,9 @@ public class ConexionAServidor : MonoBehaviour
     }
 
     /// <summary>
-    /// 
+    /// Obtiene una imagen que no es accesible para poner por el usuario, pero que anteriormente habia puesto en su sala.
     /// </summary>
-    /// <param name="imageLocation"></param>
+    /// <param name="imageLocation">URL donde esta la imagen.</param>
     /// <returns></returns>
     IEnumerator GetANonaccessImage(string imageLocation)
     {
@@ -435,7 +432,6 @@ public class ConexionAServidor : MonoBehaviour
         {
             Debug.Log(imageLocation + "" + ((DownloadHandlerTexture)requestOfNonaccessImage.downloadHandler).texture);
             InaccessibleImages.Add(new UrlToTexture(((DownloadHandlerTexture)requestOfNonaccessImage.downloadHandler).texture, imageLocation));
-
         }
         WaitingForInaccessibleImage = false;
     }
@@ -452,9 +448,9 @@ public class ConexionAServidor : MonoBehaviour
     }
 
     /// <sumary>
-    /// 
+    /// Obtiene el id de la sala, a partir de la pagina web.
     /// </sumary>
-    /// <param name="roomId"></param>
+    /// <param name="roomId">El id de la sala pasado por la pagina web.</param>
     void setRoomId(string roomId)
     {
         this.roomid = roomId;
@@ -472,12 +468,18 @@ public class ConexionAServidor : MonoBehaviour
 }
 
 /// <summary>
-/// 
+/// La relaccion entre la imagen como tal y la URL donde esta la imagen.
 /// </summary>
 [Serializable]
 public class UrlToTexture
 {
+    /// <summary>
+    /// La textura que contiene la imagen.
+    /// </summary>
     public Texture2D texture;
+    /// <summary>
+    /// La URL donde esta la imagen.
+    /// </summary>
     public string url;
     public UrlToTexture(Texture2D texture, string url)
     {
