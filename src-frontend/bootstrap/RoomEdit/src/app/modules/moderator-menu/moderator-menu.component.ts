@@ -212,7 +212,9 @@ export class ModeratorMenuComponent {
    * @param RoomToUnReport El id de la sala.
    */
   unReportRoom(RoomToUnReport: string) {
-    this.http.put(environment.BACK_END + "/rooms/unReportRoom", { id: RoomToUnReport }).subscribe()
+    this.http.put(environment.BACK_END + "/rooms/unReportRoom", { id: RoomToUnReport }).subscribe(a=>{
+      if(a)this.Rooms.splice(this.Rooms.findIndex(roomToDelete => roomToDelete._id === RoomToUnReport), 1);
+    })
   }
 
   /**
@@ -230,6 +232,8 @@ export class ModeratorMenuComponent {
    * @param id El id del comentario.
    */
   unReportComment(id: string) {
-    this.http.put(environment.BACK_END + "/comments/unReportComment", { id: id }).subscribe()
+    this.http.put(environment.BACK_END + "/comments/unReportComment", { id: id }).subscribe(a=>{
+      if (a) this.Comments.splice(this.Comments.findIndex(commentToDelete => commentToDelete._id === id), 1);
+    })
   }
 }
