@@ -8,8 +8,6 @@ import { AdminMenuComponent } from './modules/admin-menu/admin-menu.component';
 import { ModeratorMenuComponent } from './modules/moderator-menu/moderator-menu.component';
 import { ImageUploadComponent } from './modules/image-upload/image-upload.component';
 import { ChangePasswordComponent } from './modules/change-password/change-password.component';
-import { UnityComponent } from './modules/unity/unity.component';
-import { RoomViewComponent } from './modules/room-view/room-view.component';
 
 
 const routes: Routes = [
@@ -24,9 +22,7 @@ const routes: Routes = [
       { path: 'AdminMenu', component: AdminMenuComponent },
       { path: 'ModeratorMenu', component:ModeratorMenuComponent },
       { path: 'ImageUpload', component:ImageUploadComponent },
-      { path: 'ChangePassword', component:ChangePasswordComponent },
-      { path: 'UnityTest', component:UnityComponent },
-      { path: 'RoomTest', component:RoomViewComponent }
+      { path: 'ChangePassword', component:ChangePasswordComponent }
     ]
   }
 ];

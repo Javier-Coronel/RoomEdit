@@ -23,20 +23,31 @@
     p{
         color: red;
     }
+    *{
+        background-color: darkgray;
+        margin-bottom: 0;
+    }
+}
+button{
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+    margin-top: 30px;
+    margin-bottom: 25px;
 }
 img{
     max-width: 150px;
     object-fit: contain;
 }
-.uploaded-images div{
-    display: block !important;
+.uploaded-images div, .images-to-upload div{
+    display: block;
     width: 300px;
     background-color: #e1ffb1;
     margin: 5px;
 }
-.uploaded-images div img{
-    display: block !important;
+div img{
+    display: block;
     width:initial;
-    max-width: 200px !important;
+    max-width: 200px;
     margin: auto;
 }
