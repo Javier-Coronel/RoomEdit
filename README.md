@@ -8,8 +8,8 @@
 
 ## Breve descripción del proyecto
 
-El proyecto consiste de una aplicacion web la cual permitira a los usuarios crear una sala y comentar en las salas de otros.
-En las salas, los usuarios que las han creado pueden añadir diferentes imagenes para decorar la sala.
+El proyecto que consiste de una aplicación web la cual permitirá a los usuarios crear una sala y comentar en las salas de otros.
+En las salas, los usuarios que las han creado pueden añadir diferentes imágenes para decorar la sala.
 
 <!-- ## Definir el objetivo de la aplicación
 **Tener una gran idea** o encontrar un punto del mercado al que no se esté dando un producto o servicio es el punto de partida en cada nuevo proyecto. Antes de comenzar debes **definir claramente el propósito y la misión de la aplicación web**:
